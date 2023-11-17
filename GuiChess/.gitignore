@@ -80,8 +80,9 @@ ipch/
 #Hopefully Correct!
 *.VC.db*
 *.VC.opendb
-# Bernhard added .vs folder
+# Bernhard added .vs folder and the vcxproj.* Files
 .vs/
+*.vcxproj.*
 
 # Eclipse
 .metadata

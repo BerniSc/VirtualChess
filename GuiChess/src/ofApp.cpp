@@ -13,10 +13,11 @@
 void ofApp::setup(){
 	image.load("logo.png");
 	font.load("arial.ttf", 10);
-	chessWorkout.load("chess_workout.mp3", true);
+	// Removed "stream" parameter to ensure compatibility with Linux System
+	chessWorkout.load("chess_workout.mp3");
 	chessWorkout.setVolume(0.6);
-	chessWorkout.play();
 	chessWorkout.setLoop(true);
+	chessWorkout.play();
 }
 
 //--------------------------------------------------------------

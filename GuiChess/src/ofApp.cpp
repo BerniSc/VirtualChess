@@ -1,14 +1,5 @@
 #include "ofApp.h"
 
-#define CHESS_BOARD_LENGTH 8
-#define CHESS_BOARD_PLATE_DIMESION 64
-#define CHESS_BOARD_PLATE_RADIUS 10
-#define CHESS_BOARD_PLATE_DIMESION 64
-#define CHESS_BOARD_PLATE_GAP 5
-#define CHESS_BOARD_FOCUS_POINT_RADIUS 5
-#define CHESS_LABEL_CORRECTION 3
-#define CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION 5
-
 //--------------------------------------------------------------
 void ofApp::setup(){
 	image.load("logo.png");
@@ -22,23 +13,39 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	this->windowHeight = ofGetHeight();
+	this->windowWidth = ofGetWidth();
 
+	std::cout << windowHeight << "		" << windowWidth << std::endl;
+
+	// Scale acording to the SMAAAALLLLER Side of the Window, as it is more important to get the Image to fit
+	int min = std::min(windowHeight, windowWidth);
+
+	// Calculate the ScalingFactor
+	this->scalingFactorTile = float(min) / float(minimalWindowSize);
+
+	// Cap the Value so no State smaller than the Default State is possible
+	this->scalingFactorTile = scalingFactorTile <= 1.0 ? 1.0 : scalingFactorTile;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
 	//Chess Board
 	ofTranslate(32, 32);
 
+	std::cout << scalingFactorTile << std::endl;
+
+	this->CHESS_BOARD_PLATE_DIMESION = this->start_CHESS_BOARD_PLATE_DIMESION * this->scalingFactorTile;
+	this->CHESS_BOARD_PLATE_GAP = this->start_CHESS_BOARD_PLATE_GAP * this->scalingFactorTile;
+
 	ofSetColor(240);
-	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
+	for(int i = 0; i < CHESS_BOARD_LENGTH; i++) {
+		for(int j = 0; j < CHESS_BOARD_LENGTH; j++) {
 			ofDrawRectRounded(
-				i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * i,
-				j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * j,
-				CHESS_BOARD_PLATE_DIMESION,
-				CHESS_BOARD_PLATE_DIMESION,
+				i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * i,
+				j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * j,
+				CHESS_BOARD_PLATE_DIMESION ,
+				CHESS_BOARD_PLATE_DIMESION ,
 				CHESS_BOARD_PLATE_RADIUS);
 		};
 	};
@@ -47,24 +54,24 @@ void ofApp::draw(){
 	ofDrawRectRounded(
 		0,
 		0,
-		CHESS_BOARD_PLATE_DIMESION,
-		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_DIMESION ,
+		CHESS_BOARD_PLATE_DIMESION ,
 		CHESS_BOARD_PLATE_RADIUS
 	);
 	ofSetColor(255, 67, 40, 60);
 	ofDrawRectRounded(
 		64 + 5,
 		64 + 5,
-		CHESS_BOARD_PLATE_DIMESION,
-		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_DIMESION ,
+		CHESS_BOARD_PLATE_DIMESION ,
 		CHESS_BOARD_PLATE_RADIUS
 	);
 	ofSetColor(255, 153, 40, 100);
 	ofDrawRectRounded(
 		128 + 10,
 		128 + 10,
-		CHESS_BOARD_PLATE_DIMESION,
-		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_DIMESION ,
+		CHESS_BOARD_PLATE_DIMESION ,
 		CHESS_BOARD_PLATE_RADIUS
 	);
 
@@ -72,31 +79,31 @@ void ofApp::draw(){
 	string chessAlphabet[8] = { "A", "B", "C", "D", "E", "F", "G", "H" };
 	string chessNumbers[8] = { "1", "2", "3", "4", "5", "6", "7", "8" };
 	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + i * CHESS_BOARD_PLATE_GAP - CHESS_LABEL_CORRECTION,
-			-CHESS_BOARD_PLATE_GAP);
+		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + i * CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_CORRECTION,
+			-CHESS_BOARD_PLATE_GAP );
 	}
 
 	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + i * CHESS_BOARD_PLATE_GAP - CHESS_LABEL_CORRECTION,
-			CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP + CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION);
+		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + i * CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_CORRECTION,
+			CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP  + CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
 	}
 
 	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-		font.drawString(chessNumbers[j], -CHESS_BOARD_PLATE_GAP - CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION,
-			j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + j * CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION);
+		font.drawString(chessNumbers[j], -CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION,
+			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
 	}
 
 	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-		font.drawString(chessNumbers[j], CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP - CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION,
-			j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + j * CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION);
+		font.drawString(chessNumbers[j], CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP  - CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION,
+			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
 	}
 
 	ofSetColor(263, 47, 0);
 	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
 		for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
 			ofDrawCircle(
-				i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * i + CHESS_BOARD_PLATE_DIMESION / 2,
-				j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * j + CHESS_BOARD_PLATE_DIMESION / 2,
+				i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * i + CHESS_BOARD_PLATE_DIMESION / 2 ,
+				j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * j + CHESS_BOARD_PLATE_DIMESION / 2 ,
 				CHESS_BOARD_FOCUS_POINT_RADIUS);
 		};
 	};

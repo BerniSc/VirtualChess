@@ -1,6 +1,7 @@
 COMPILER = "g++"
 PROJECTNAME = chessEngine
-SOURCE = main.cpp chessBoard.cpp utility.cpp
+# SOURCE = main.cpp chessBoard.cpp utility.cpp
+SOURCE = uciTest.cpp
 FLAGS = -std=c++17 -pthread
 
 $(PROJECTNAME) : $(SOURCE)

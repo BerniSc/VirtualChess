@@ -57,6 +57,10 @@ namespace engine {
             // Returns an 8x8 Char grid containing the Pieces
             char** string2board(const std::string board); 
 
+            // Get the current Board
+            char** getBoardArray() const;
+            std::string getBoardString() const;
+
         friend ChessEngine;
     };
 
@@ -75,6 +79,9 @@ namespace engine {
 
             // Returns Vector of possibles moves for a specific Figure
             std::vector<ChessTile> getPossibleMoves(char const figure) const;
+
+            // Returns the char-array of the current Board
+            char** getCurrentBoard() const;
     };
 
 }

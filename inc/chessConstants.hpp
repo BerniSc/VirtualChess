@@ -8,7 +8,7 @@ namespace constants {
     constexpr inline char bishop = 'b';
     constexpr inline char queen = 'q';
     constexpr inline char king = 'k';
-    constexpr inline char peasant = 'p';
+    constexpr inline char pawn = 'p';
 
     // White Pieces
     constexpr inline char ROOK = 'R';
@@ -16,7 +16,7 @@ namespace constants {
     constexpr inline char BISHOP = 'B';
     constexpr inline char QUEEN = 'Q';
     constexpr inline char KING = 'K';
-    constexpr inline char PEASANT = 'P';
+    constexpr inline char PAWN = 'P';
 
     // Whose turn is it
     // Can be same as Bishop as it is distinct by the Position it is placed at in the Proctocoll

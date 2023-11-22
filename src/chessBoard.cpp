@@ -5,7 +5,18 @@
 #include <string>
 #include <cctype>
 
-char** engine::ChessBoard::string2board(std::string fen) {
+char engine::ChessBoard::arrayBoard[8][8];
+std::string engine::ChessBoard::currentBoard;
+
+engine::ChessBoard::ChessBoard() {
+
+}
+
+engine::ChessBoard::~ChessBoard() {
+
+}
+
+char (*engine::ChessBoard::string2board(std::string fen))[8] {
     // Initialize the whole array to zero
     for(int i = 0; i < 8; i++)
         for(int j = 0; j < 8; j++)
@@ -25,7 +36,7 @@ char** engine::ChessBoard::string2board(std::string fen) {
         } else {
             // If Symbol is a Digit skip its value in cols
             if(isdigit(symbol)) {
-                col += (int) (symbol - '0');
+                col += (int) (symbol - '0') - 1;
             } else {
                 // set the pieces
                 arrayBoard[line][col] = symbol;
@@ -33,4 +44,14 @@ char** engine::ChessBoard::string2board(std::string fen) {
             }
         }
     }
+    return arrayBoard;
+}
+
+char (*engine::ChessBoard::getBoardArray() const)[8] {
+    return this->arrayBoard;
+}
+
+void engine::ChessBoard::reset() {
+    // Reset the Board to the Initial String
+    this->currentBoard = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 }

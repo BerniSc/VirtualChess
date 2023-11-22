@@ -7,59 +7,15 @@
 
 #include <iostream>
 
+#include "chessConstants.hpp"
+#include "chessTile.hpp"
+#include "figure.hpp"
+
 namespace engine {
-    // Need ad Least Engine for Friend declaration
-    class ChessTile;
+    // Need ad Least Engine for Friend declaration and Figure
     class ChessBoard;
     class ChessEngine;
-
-    // Class only used for "Interfacing" with OF Application -> Through ChessEngine pos is found and returned as Tile
-    //      Provides nice usability as it can output the indices as well as the actuall value (Like "A-1")
-    class ChessTile {
-        private:
-            int x, y;
-        public:
-            inline ChessTile(int x, int y) : x(x), y(y) {
-
-            };
-            
-            inline ChessTile(char x, int y) : x(toupper(x) - 'A'), y(y) {
-
-            };
-
-            // Usable array-values of the current Tile
-            inline std::pair<int, int> getArrayNr() {
-                std::pair<int, int> ret;
-                ret.first = x;
-                ret.second = y;
-                return ret;
-            }; 
-
-            // i.e. "A3" or Other Chess Coordinates
-            std::pair<char, int> getFieldNr() {
-                std::pair<char, int> ret;
-                ret.first = x + 'A';
-                ret.second = y + 1;
-                return ret;
-            };     
-
-    };
-
-    // Class used to store 
-    struct Figure {
-        protected:
-            std::vector<ChessTile> possibleMoves;
-
-        public:
-            // Current Position
-            engine::ChessTile position;
-            char identifier;
-
-            virtual std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) = 0;
-            virtual void move() = 0;
-
-            virtual ~Figure();
-    };
+    class Figure;
 
     // Class that contains the actuall internal representation of the board that is beeing played 
     //    -> Provides only conversion functions from internal storage to other notation Form (Char array and FEN-String)
@@ -72,9 +28,10 @@ namespace engine {
             ChessBoard();                                                  // Private constructor -> Only usable in Friend (ChessEngine)
 
             void reset();
+
         public:
             // Returns the current FEN String representing the Board
-            static std::string board2string(const char * const board[8]);
+            static std::string board2string(const char board[8][8]);
             // Returns an 8x8 Char grid containing the Pieces
             static char(*string2board(const std::string board))[8]; 
 
@@ -84,6 +41,11 @@ namespace engine {
 
             ~ChessBoard();
 
+            inline void loadFEN(std::string fen) {
+                this->currentBoard = fen;
+            }
+
+
         friend ChessEngine;
     };
 
@@ -91,25 +53,39 @@ namespace engine {
         private:
             ChessBoard currentBoard;
 
-            // Stores the alive Figures
-            std::map<char, Figure*> aliveFigures;
+            struct MoveGenerator {
+                private:
+                    engine::Figure *referenceMover;
+                public:
+                    MoveGenerator();
+                    ~MoveGenerator();
+
+                    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8], engine::ChessTile tile);
+            };
+            
+            MoveGenerator* moveGen;
+
         public:
             // Reset the Board and all its Pieces -> Restart for new Game
             // Sets the currentBoard using class ChessBoard
             void reset();
 
-            // Get Position of requested Figure from Map
-            // Programm than can use Data to populate Board and print Position
-            ChessTile getPosition(char const figure) const;
-
-            // Returns Vector of possibles moves for a specific Figure
-            std::vector<ChessTile> getPossibleMoves(char const figure) const;
+            // Returns Vector of possibles moves for a specific Tile in Board
+            std::vector<ChessTile> getPossibleMoves(ChessTile tile) const;
 
             // Trys to move the given Figure to the given Tile, returns success
-            bool tryMove(char const figure, ChessTile target);
+            bool tryMove(ChessTile source, ChessTile target);
 
             // Returns the char-array of the current Board
             char (*getCurrentBoard() const)[8];
+
+            // DEBUG ONLY
+            inline void loadFEN(std::string string) {
+                this->currentBoard.loadFEN(string);
+            }
+
+            ChessEngine();
+            ~ChessEngine();
     };
 }
 

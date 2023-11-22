@@ -17,9 +17,3 @@ void ChessTester::printBoard(std::string board) {
     std::cout << "FEN: " << board << std::endl;
     printBoard(engine::ChessBoard::string2board(board));
 }
-
-void ChessTester::printPos(char const figure) {
-    engine::ChessTile tile = this->engine.getPosition(figure);
-    std::pair<int, int> tmp = tile.getArrayNr();
-    std::cout << tmp.first << "|" << tmp.second << std::endl;
-}

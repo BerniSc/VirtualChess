@@ -1,10 +1,18 @@
 #include "figure.hpp"
 
+#include <iostream>
+
+engine::Figure::~Figure() {
+
+}
+
 std::vector<engine::ChessTile> King::getPossibleMoves(char const board[8][8]) {
 
 }
-void King::move(){
-    
+
+Pawn::Pawn(engine::ChessTile tile, char figure) {
+    this->position = tile;
+    this->identifier = figure;
 }
 
 std::vector<engine::ChessTile> Pawn::getPossibleMoves(char const board[8][8]) {
@@ -47,8 +55,4 @@ std::vector<engine::ChessTile> Pawn::getPossibleMoves(char const board[8][8]) {
     }
 
     return moves;
-}
-
-void Pawn::move(){
-    
 }

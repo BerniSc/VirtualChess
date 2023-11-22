@@ -47,6 +47,43 @@ char (*engine::ChessBoard::string2board(std::string fen))[8] {
     return arrayBoard;
 }
 
+std::string engine::ChessBoard::board2string(const char board[8][8]) {
+    std::string fen = "";
+
+    // Iterate through each row of the board
+    for(int row = 7; row >= 0; row--) {
+        int emptyCount = 0;
+
+        // Iterate through each column of the row
+        for(int col = 0; col < 8; col++) {
+            if(board[row][col] == 0) {
+                // Empty square, increment empty count
+                emptyCount++;
+            } else {
+                // Non-empty square
+                if(emptyCount > 0) {
+                    // Append empty count to FEN string
+                    fen += std::to_string(emptyCount);
+                    emptyCount = 0;
+                }
+
+                // Append piece to FEN string
+                fen += board[row][col];
+            }
+        }
+
+        // Handle the last empty squares in the row
+        if(emptyCount > 0)
+            fen += std::to_string(emptyCount);
+
+        // Separate rows with '/'
+        if(row > 0)
+            fen += '/';
+    }
+
+    return fen;
+}
+
 char (*engine::ChessBoard::getBoardArray() const)[8] {
     return this->arrayBoard;
 }

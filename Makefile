@@ -1,6 +1,6 @@
 COMPILER = "g++"
 PROJECTNAME = bin/chessEngine
-SOURCE = main.cpp src/chessBoard.cpp src/chessEngine.cpp src/chessTester.cpp src/utility.cpp
+SOURCE = main.cpp src/chessBoard.cpp src/chessEngine.cpp src/chessTester.cpp src/utility.cpp src/figure.cpp
 # SOURCE = uciTest.cpp
 FLAGS = -std=c++17 -pthread
 

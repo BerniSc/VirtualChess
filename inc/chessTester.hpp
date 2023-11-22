@@ -14,7 +14,7 @@ struct ChessTester {
     void printBoard(char(*board)[8]);
     void printBoard(std::string board);
 
-    void printPos(char const figure);
+    void printPos(engine::ChessTile tile);
 };
 
 #endif

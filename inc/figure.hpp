@@ -1,36 +1,58 @@
-#ifndef FIGURE_HPP
-#define FIGURE_HPP
+#ifndef Figure_HPP
+#define Figure_HPP
 
 #include <vector>
 
-#include "chessInterface.hpp"
+#include "chessTile.hpp"
 
-using engine::Figure;
+namespace engine {
+    struct Figure {
+        protected:
+            // Current Position
+            engine::ChessTile position;
+            char identifier;
 
-struct Pawn : public Figure {
-    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]);
-    void move();
+        public:
+            virtual std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) = 0;
+
+            virtual ~Figure();
+    };
+}
+
+struct Pawn : public engine::Figure {
+    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
+
+    Pawn(engine::ChessTile position, char identifier);
 };
 
-struct King : public Figure {
-    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]);
-    void move();
+struct King : public engine::Figure {
+    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
+
+    King(engine::ChessTile position, char identifier);
 };
 
-struct Queen : public Figure {
+struct Queen : public engine::Figure {
+    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
 
+    Queen(engine::ChessTile position, char identifier);
 };
 
-struct Bishop : public Figure {
+struct Bishop : public engine::Figure {
+    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
 
+    Bishop(engine::ChessTile position, char identifier);
 };
 
-struct Knight : public Figure {
+struct Knight : public engine::Figure {
+    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
 
+    Knight(engine::ChessTile position, char identifier);
 };
 
-struct Rook : public Figure {
+struct Rook : public engine::Figure {
+    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
 
+    Rook(engine::ChessTile position, char identifier);
 };
 
 

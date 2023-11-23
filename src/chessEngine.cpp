@@ -1,5 +1,7 @@
 #include "chessInterface.hpp"
 
+#include <stdexcept>
+
 engine::ChessEngine::ChessEngine() {
     this->moveGen = new MoveGenerator();
 }
@@ -34,8 +36,18 @@ engine::ChessEngine::MoveGenerator::~MoveGenerator() {
 std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMoves(char const board[8][8], engine::ChessTile tile) {
     std::vector<engine::ChessTile> allowedMoves;
 
-    std::pair<int, int> pos = tile.getArrayNr(); 
+    std::pair<int, int> pos = tile.getArrayNr();
+
+    if(pos.first > 7 || pos.first < 0 || pos.second > 7 || pos.second < 0) {
+        std::cout << "Invalid index in getPossible Moves: " << pos.first << "   " << pos.second << std::endl;
+        return allowedMoves; 
+    }
+
+    std::cout << pos.first << "||" << pos.second << std::endl;
+
     char figure = board[pos.first][pos.second];
+
+    std::cout << "Checking Figure " << figure << " on x:" << pos.first << "| y:" << pos.second << std::endl;
 
     if(this->referenceMover)
         delete referenceMover;
@@ -43,18 +55,22 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     // Parse the current Tile content
     switch(toupper(figure)) {
         case constants::ROOK :
-            //referenceMover = new Rook();
+            referenceMover = new Rook(tile, figure);
             break;
         case constants::KNIGHT :
+            throw std::runtime_error("Feature KNIGHT MOVE not supportet");
             //referenceMover = new Knight();
             break;
         case constants::BISHOP :
+            throw std::runtime_error("Feature BISHOP MOVE not supportet");
             //referenceMover = new Bishop();
             break;
         case constants::KING :
+            throw std::runtime_error("Feature KING MOVE not supportet");
             //referenceMover = new King();
             break;
         case constants::QUEEN :
+            throw std::runtime_error("Feature QUEEN MOVE not supportet");
             //referenceMover = new Queen();
             break;
         case constants::PAWN :

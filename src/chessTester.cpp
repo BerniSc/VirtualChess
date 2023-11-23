@@ -5,9 +5,9 @@ ChessTester::ChessTester(engine::ChessEngine& engine) : engine(engine) {
 }
 
 void ChessTester::printBoard(char(* board)[8]) {
-    for(int i = 0; i < 8; i++) {
-        for(int j = 0; j < 8; j++) {
-            std::cout << board[i][j];
+    for(int row = 0; row < 8; row++) {
+        for(int col = 0; col < 8; col++) {
+            std::cout << (board[col][row] == 0 ? '.' : board[col][row]);
         }
         std::cout << "\n";
     }

@@ -43,6 +43,14 @@ namespace engine {
 
             inline void loadFEN(std::string fen) {
                 this->currentBoard = fen;
+                
+                char(*newBoard)[8] = string2board(currentBoard);
+                // Copy the values element by element
+                for (int row = 0; row < 8; row++) {
+                    for (int col = 0; col < 8; col++) {
+                        this->arrayBoard[col][row] = newBoard[col][row];
+                    }
+                }
             }
 
 
@@ -56,14 +64,21 @@ namespace engine {
             struct MoveGenerator {
                 private:
                     engine::Figure *referenceMover;
+
                 public:
                     MoveGenerator();
                     ~MoveGenerator();
+
+                    // Check a Move by making a Pseudo-Move and check for check ->
+                    bool checkPseudoMove();
 
                     std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8], engine::ChessTile tile);
             };
             
             MoveGenerator* moveGen;
+
+            char checkCheck() const;
+
 
         public:
             // Reset the Board and all its Pieces -> Restart for new Game

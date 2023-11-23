@@ -16,27 +16,28 @@ engine::ChessBoard::~ChessBoard() {
 
 }
 
+/*
 char (*engine::ChessBoard::string2board(std::string fen))[8] {
     // Initialize the whole array to zero
     for(int i = 0; i < 8; i++)
         for(int j = 0; j < 8; j++)
-            arrayBoard[i][j] = 0;
+            arrayBoard[i][j] = '.';
 
     // Split the FEN to seperate Board from Game parameters
     std::vector<std::string> seperatedFen = split(fen, " ");
 
-    int col = 0, line = 7;
+    int col = 0, line = 0;
     
     // Populate board-placeholder according to the Board-FEN
     for(char& symbol : seperatedFen[0]) {
         // Symbol represents Line change
         if(symbol == '/') {
             col = 0;
-            line--;
+            line++;
         } else {
             // If Symbol is a Digit skip its value in cols
             if(isdigit(symbol)) {
-                col += (int) (symbol - '0') - 1;
+                col += (int) (symbol - '0');
             } else {
                 // set the pieces
                 arrayBoard[line][col] = symbol;
@@ -46,7 +47,40 @@ char (*engine::ChessBoard::string2board(std::string fen))[8] {
     }
     return arrayBoard;
 }
+*/
 
+char (*engine::ChessBoard::string2board(std::string fen))[8] {
+    // Initialize the whole array to zero
+    for(int i = 0; i < 8; i++)
+        for(int j = 0; j < 8; j++)
+            arrayBoard[i][j] = 0;
+
+    // Split the FEN to seperate Board from Game parameters
+    std::vector<std::string> seperatedFen = split(fen, " ");
+
+    int col = 0, line = 0;
+    
+    // Populate board-placeholder according to the Board-FEN
+    for(char& symbol : seperatedFen[0]) {
+        // Symbol represents Line change
+        if(symbol == '/') {
+            col = 0;
+            line++;
+        } else {
+            // If Symbol is a Digit skip its value in cols
+            if(isdigit(symbol)) {
+                col += (int) (symbol - '0');
+            } else {
+                // set the pieces
+                arrayBoard[col][line] = symbol;
+                col++;
+            }
+        }
+    }
+    return arrayBoard;
+}
+
+/*
 std::string engine::ChessBoard::board2string(const char board[8][8]) {
     std::string fen = "";
 
@@ -78,6 +112,44 @@ std::string engine::ChessBoard::board2string(const char board[8][8]) {
 
         // Separate rows with '/'
         if(row > 0)
+            fen += '/';
+    }
+
+    return fen;
+}
+*/
+
+std::string engine::ChessBoard::board2string(const char board[8][8]) {
+    std::string fen = "";
+
+    // Iterate through each row of the board
+    for(int row = 0; row < 8; row++) {
+        int emptyCount = 0;
+
+        // Iterate through each column of the row
+        for(int col = 0; col < 8; col++) {
+            if(board[col][row] == 0) {
+                // Empty square, increment empty count
+                emptyCount++;
+            } else {
+                // Non-empty square
+                if(emptyCount > 0) {
+                    // Append empty count to FEN string
+                    fen += std::to_string(emptyCount);
+                    emptyCount = 0;
+                }
+
+                // Append piece to FEN string
+                fen += board[col][row];
+            }
+        }
+
+        // Handle the last empty squares in the row
+        if(emptyCount > 0)
+            fen += std::to_string(emptyCount);
+
+        // Separate rows with '/' except last row
+        if(row < 7)
             fen += '/';
     }
 

@@ -5,10 +5,10 @@ void ofApp::setup(){
 	image.load("logo.png");
 	font.load("arial.ttf", 10);
 	// Removed "stream" parameter to ensure compatibility with Linux System
-	chessWorkout.load("chess_workout.mp3");
-	chessWorkout.setVolume(0.6);
-	chessWorkout.setLoop(true);
-	chessWorkout.play();
+	//chessWorkout.load("chess_workout.mp3");
+	//chessWorkout.setVolume(0.6);
+	//chessWorkout.setLoop(true);
+	//chessWorkout.play();
 }
 
 //--------------------------------------------------------------
@@ -16,7 +16,7 @@ void ofApp::update(){
 	this->windowHeight = ofGetHeight();
 	this->windowWidth = ofGetWidth();
 
-	std::cout << windowHeight << "		" << windowWidth << std::endl;
+	//std::cout << windowHeight << "		" << windowWidth << std::endl;
 
 	// Scale acording to the SMAAAALLLLER Side of the Window, as it is more important to get the Image to fit
 	int min = std::min(windowHeight, windowWidth);
@@ -33,7 +33,7 @@ void ofApp::draw(){
 	//Chess Board
 	ofTranslate(32, 32);
 
-	std::cout << scalingFactorTile << std::endl;
+	//std::cout << scalingFactorTile << std::endl;
 
 	this->CHESS_BOARD_PLATE_DIMESION = this->start_CHESS_BOARD_PLATE_DIMESION * this->scalingFactorTile;
 	this->CHESS_BOARD_PLATE_GAP = this->start_CHESS_BOARD_PLATE_GAP * this->scalingFactorTile;
@@ -78,9 +78,14 @@ void ofApp::draw(){
 	ofSetColor(240);
 	string chessAlphabet[8] = { "A", "B", "C", "D", "E", "F", "G", "H" };
 	string chessNumbers[8] = { "1", "2", "3", "4", "5", "6", "7", "8" };
+	
 	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
+		// Draw Text mirrored
+		ofPushMatrix();
+		ofScale(1, -1);  // Mirror in the horizontal direction
 		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + i * CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_CORRECTION,
-			-CHESS_BOARD_PLATE_GAP );
+			+ 3 * CHESS_BOARD_PLATE_GAP );
+		ofPopMatrix();
 	}
 
 	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
@@ -89,13 +94,17 @@ void ofApp::draw(){
 	}
 
 	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-		font.drawString(chessNumbers[j], -CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION,
+		font.drawString(chessNumbers[7-j], -CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION,
 			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
 	}
 
 	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
+		// Draw Text mirrored
+		ofPushMatrix();
+		ofScale(1, -1);  // Mirror in the horizontal direction
 		font.drawString(chessNumbers[j], CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP  - CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION,
-			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
+			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION - this->windowHeight + 64 + this->fontWidth /*Error with size of text*/);
+		ofPopMatrix();
 	}
 
 	ofSetColor(263, 47, 0);
@@ -221,7 +230,9 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+	if (w < 616 || h < 616) {
+		ofSetWindowShape(616, 616);
+	}
 }
 
 //--------------------------------------------------------------

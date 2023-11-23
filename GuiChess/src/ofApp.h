@@ -12,6 +12,8 @@ class ofApp : public ofBaseApp{
 
 		const int CHESS_BOARD_LENGTH = 8;
 
+		const int fontWidth = 8;
+
 		int CHESS_BOARD_PLATE_DIMESION = 64;
 		const int start_CHESS_BOARD_PLATE_DIMESION = this->CHESS_BOARD_PLATE_DIMESION;
 		const int CHESS_BOARD_PLATE_RADIUS = 10;

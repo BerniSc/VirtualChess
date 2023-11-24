@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include <algorithm> // For checking if contained in Vector
+
 #include "chessConstants.hpp"
 #include "chessTile.hpp"
 #include "figure.hpp"
@@ -23,14 +25,15 @@ namespace engine {
     class ChessBoard {
         private:
             static std::string currentBoard;
-            static char arrayBoard[8][8];                                  // Not actively used to Store Board internaly, but as a static, inScope holder for string2board
-
+            static char arrayBoard[8][8];
             ChessBoard();                                                  // Private constructor -> Only usable in Friend (ChessEngine)
+
+            void move(ChessTile source, ChessTile target);
 
             void reset();
 
         public:
-            // Returns the current FEN String representing the Board
+            // Returns the FEN String representing the Board
             static std::string board2string(const char board[8][8]);
             // Returns an 8x8 Char grid containing the Pieces
             static char(*string2board(const std::string board))[8]; 
@@ -69,6 +72,9 @@ namespace engine {
                     MoveGenerator();
                     ~MoveGenerator();
 
+                    engine::ChessTile lastCheckedTile;
+                    std::vector<engine::ChessTile> lastPossibleMoves;
+
                     // Check a Move by making a Pseudo-Move and check for check ->
                     bool checkPseudoMove();
 
@@ -77,19 +83,21 @@ namespace engine {
             
             MoveGenerator* moveGen;
 
+            // Actually do the Move
+            void move(engine::ChessTile source, engine::ChessTile target);
+
             char checkCheck() const;
-
-
+            char checkCheckMate() const;
         public:
             // Reset the Board and all its Pieces -> Restart for new Game
             // Sets the currentBoard using class ChessBoard
             void reset();
 
             // Returns Vector of possibles moves for a specific Tile in Board
-            std::vector<ChessTile> getPossibleMoves(ChessTile tile) const;
+            std::vector<engine::ChessTile> getPossibleMoves(engine::ChessTile tile) const;
 
             // Trys to move the given Figure to the given Tile, returns success
-            bool tryMove(ChessTile source, ChessTile target);
+            bool tryMove(engine::ChessTile source, engine::ChessTile target);
 
             // Returns the char-array of the current Board
             char (*getCurrentBoard() const)[8];

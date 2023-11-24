@@ -45,8 +45,20 @@ namespace engine {
 
             inline bool getIsCaptureMove() const {
                 return this->isCaptureMove;
-            };     
+            };
+
+            friend bool operator!=(const ChessTile& lhs, const ChessTile& rhs);     
     };
+
+    bool operator!=(const ChessTile& lhs, const ChessTile& rhs) {
+        bool ret;
+        if(lhs.x == rhs.x && lhs.y == rhs.y)
+            ret = false;
+        else
+            ret = true;
+        
+        return ret;
+    }
 }
 
 #endif

@@ -34,7 +34,9 @@ engine::ChessEngine::MoveGenerator::~MoveGenerator() {
 }
 
 std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMoves(char const board[8][8], engine::ChessTile tile) {
-    std::vector<engine::ChessTile> allowedMoves;
+    std::vector<engine::ChessTile>& allowedMoves = this->lastPossibleMoves;
+
+    this->lastCheckedTile = tile;
 
     std::pair<int, int> pos = tile.getArrayNr();
 
@@ -83,6 +85,24 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     if(referenceMover)
         allowedMoves = this->referenceMover->getPossibleMoves(board);
 
+    this->lastPossibleMoves = allowedMoves;
+
     return allowedMoves;
+}
+
+bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile target) {
+    bool retVal = false;
+
+    // If the Source is not also the last checked Tile check the Source and safe its Tiles in MoveGev
+    if(source != this->moveGen->lastCheckedTile)
+        getPossibleMoves(source);
     
+    // If TargetTile is contained in possible Moves do the Move
+    if(std::find(this->moveGen->lastPossibleMoves.begin(), this->moveGen->lastPossibleMoves.end(), target) != this->moveGen->lastPossibleMoves.end()) {
+        this->move(source, target);
+        retVal = true;
+    }
+
+
+    return retVal;
 }

@@ -56,7 +56,36 @@ std::vector<engine::ChessTile> Pawn::getPossibleMoves(char const board[8][8]) {
 
     return moves;
 }
+/**
+ * Queen Section
+*/
+Queen::Queen(engine::ChessTile tile, char figure) {
+    this->position = tile;
+    this->identifier = figure;
+}
 
+std::vector<engine::ChessTile> Queen::getPossibleMoves(const char board[8][8]) {
+    std::vector<engine::ChessTile> moves;
+    std::pair<int, int> curPos = position.getArrayNr();
+
+    // Passing Identifier that does not match the class it is passed to is okay, as it only checks for Upper/Lowercase -> TODO Check anyhow
+    Rook referenceMoverRook(this->position, this->identifier);
+    Bishop referenceMoverBishop(this->position, this->identifier);
+
+    std::vector<engine::ChessTile> tmp;
+    // Get Rook Moves and add them to Queen Vector
+    tmp = referenceMoverRook.getPossibleMoves(board);
+    moves.insert(moves.end(), tmp.begin(), tmp.end());
+    // Get Bishop Moves and add them to Queen Vector
+    tmp = referenceMoverBishop.getPossibleMoves(board);
+    moves.insert(moves.end(), tmp.begin(), tmp.end());
+
+    return moves;
+}
+
+/**
+ * Bishop Section
+*/
 Bishop::Bishop(engine::ChessTile tile, char figure) {
     this->position = tile;
     this->identifier = figure;
@@ -131,6 +160,34 @@ std::vector<engine::ChessTile> Bishop::getPossibleMoves(const char board[8][8]) 
     return moves;
 }
 
+/**
+ * Knight Section
+*/
+Knight::Knight(engine::ChessTile tile, char figure) {
+    this->position = tile;
+    this->identifier = figure;
+}
+
+std::vector<engine::ChessTile> Knight::getPossibleMoves(const char board[8][8]) {
+    std::vector<engine::ChessTile> moves;
+    std::pair<int, int> curPos = position.getArrayNr();
+
+    for(const auto& move : this->knightMoveVectors) {
+        int newX = curPos.first + move[0];
+        int newY = curPos.second + move[1];
+        
+        // Check OutOfBounds
+        if(newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
+            if(board[newX][newY] == 0)
+                moves.push_back(engine::ChessTile(newX, newY));
+            else if((isupper(identifier) && islower(board[newX][newY])) ||
+                    (islower(identifier) && isupper(board[newX][newY])))
+                moves.push_back(engine::ChessTile(newX, newY, true));
+        }
+    }
+
+    return moves;
+}
 
 Rook::Rook(engine::ChessTile tile, char figure) {
     this->position = tile;

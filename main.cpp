@@ -25,10 +25,16 @@ int main(int argc, char** argv) {
     test = virtualChessEngine.getPossibleMoves(engine::ChessTile(0,7));
     tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
     // Load Bishop TestMovement
-    virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/8/2BK2R");
+    virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/4N3/8/3N4/8/2BK2R");
     tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
-    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(2,7));
+    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(3,5));
     tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
+    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(4,3));
+    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
+    std::cout << test.size();
+
+    tester->testRook();
+    tester->testKnight();
     
 
     

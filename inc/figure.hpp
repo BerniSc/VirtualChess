@@ -44,9 +44,17 @@ struct Bishop : public engine::Figure {
 };
 
 struct Knight : public engine::Figure {
-    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
+    private:
+        // Set an array of possible Knight Moves and check them one by one
+        // First all on the right Side, then on the left Side
+        int const knightMoveVectors[8][2] = {
+            {1, 2}, {2, 1}, {2, -1}, {1, -2},
+            {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}
+        };
+    public:
+        std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
 
-    Knight(engine::ChessTile position, char identifier);
+        Knight(engine::ChessTile position, char identifier);
 };
 
 struct Rook : public engine::Figure {

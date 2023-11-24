@@ -58,24 +58,26 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
             referenceMover = new Rook(tile, figure);
             break;
         case constants::KNIGHT :
-            throw std::runtime_error("Feature KNIGHT MOVE not supportet");
-            //referenceMover = new Knight();
+            //throw std::runtime_error("Feature KNIGHT MOVE not supportet");
+            referenceMover = new Knight(tile, figure);
             break;
         case constants::BISHOP :
-            throw std::runtime_error("Feature BISHOP MOVE not supportet");
-            //referenceMover = new Bishop();
+            //throw std::runtime_error("Feature BISHOP MOVE not supportet");
+            referenceMover = new Bishop(tile, figure);
             break;
         case constants::KING :
             throw std::runtime_error("Feature KING MOVE not supportet");
             //referenceMover = new King();
             break;
         case constants::QUEEN :
-            throw std::runtime_error("Feature QUEEN MOVE not supportet");
-            //referenceMover = new Queen();
+            //throw std::runtime_error("Feature QUEEN MOVE not supportet");
+            referenceMover = new Queen(tile, figure);
             break;
         case constants::PAWN :
             referenceMover = new Pawn(tile, figure);
             break;
+        default :
+            throw std::runtime_error("Please try a Tile containing Something");
     }
     
     if(referenceMover)

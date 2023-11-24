@@ -16,6 +16,12 @@ struct ChessTester {
 
     void printBoardWithHighlights(char(* board)[8], const std::vector<engine::ChessTile>& highlights);
 
+    void testRook();
+    void testKnight();
+    void testBishop();
+    void testQueen();
+    void testPawn();
+
     void printPos(engine::ChessTile tile);
 };
 

@@ -47,3 +47,51 @@ void ChessTester::printBoardWithHighlights(char(* board)[8], const std::vector<e
         std::cout << "\n";
     }
 }
+
+void ChessTester::testRook() {
+    // Rook can move in all directions, capture and get hindered by own figures
+    std::string testFENPos1 = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";
+    std::string testFENPos2 = "r1bqkbnr/1pp1pppp/2n5/8/2PpP3/7p/PP3PP1/RNBQKBNR b KQkq - 0 4";
+
+    std::vector<engine::ChessTile> tmp;
+    
+    this->engine.loadFEN(testFENPos1);
+    tmp = engine.getPossibleMoves(engine::ChessTile(0,0));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 3) throw std::runtime_error("Assertation Rook pos1-1 failed");
+    tmp = engine.getPossibleMoves(engine::ChessTile(7,7));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 2) throw std::runtime_error("Assertation Rook pos1-2 failed");
+
+    this->engine.loadFEN(testFENPos2);
+    tmp = engine.getPossibleMoves(engine::ChessTile(0,0));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 7) throw std::runtime_error("Assertation Rook pos2-1 failed");
+    tmp = engine.getPossibleMoves(engine::ChessTile(7,7));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 2) throw std::runtime_error("Assertation Rook pos2-2 failed");
+}
+
+void ChessTester::testKnight() {
+    // Rook can move in all directions, capture and get hindered by own figures
+    std::string testFENPos1 = "rnbqkbnr/pppppppp/8/4N3/8/3N4/8/2BK2R";
+    std::string testFENPos2 = "r1bqkbnr/1pp1pppp/2n5/8/2PpP3/7p/PP3PP1/RNBQKBNR b KQkq - 0 4";
+
+    std::vector<engine::ChessTile> tmp;
+    
+    this->engine.loadFEN(testFENPos1);
+    tmp = engine.getPossibleMoves(engine::ChessTile(4,3));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 7) throw std::runtime_error("Assertation Knight pos1-1 failed");
+    tmp = engine.getPossibleMoves(engine::ChessTile(6,0));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 2) throw std::runtime_error("Assertation Knight pos1-2 failed");
+
+    this->engine.loadFEN(testFENPos2);
+    tmp = engine.getPossibleMoves(engine::ChessTile(2,2));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 5) throw std::runtime_error("Assertation Knight pos2-1 failed");
+    tmp = engine.getPossibleMoves(engine::ChessTile(1,7));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 3) throw std::runtime_error("Assertation Knight pos2-2 failed");
+}

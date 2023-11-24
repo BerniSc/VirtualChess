@@ -12,12 +12,14 @@ namespace engine {
     class ChessTile {
         private:
             int x, y;
+
+            bool isCaptureMove;
         public:
-            inline ChessTile() : y(-1), x(-1) {
+            inline ChessTile() : y(-1), x(-1), isCaptureMove(false) {
 
             }
 
-            inline explicit ChessTile(int const x, int const y) : x(x), y(y) {
+            inline explicit ChessTile(int const x, int const y, bool const isCaptureMove = false) : x(x), y(y), isCaptureMove(isCaptureMove) {
                 
             };  
                 
@@ -26,7 +28,7 @@ namespace engine {
             };
 
             // Usable array-values of the current Tile
-            inline std::pair<int, int> getArrayNr() {
+            inline std::pair<int, int> getArrayNr() const {
                 std::pair<int, int> ret;
                 ret.first = x;
                 ret.second = y;
@@ -34,11 +36,15 @@ namespace engine {
             }; 
 
             // i.e. "A3" or Other Chess Coordinates
-            std::pair<char, int> getFieldNr() {
+            std::pair<char, int> getFieldNr() const {
                 std::pair<char, int> ret;
                 ret.first = x + 1;
                 ret.second = y + 'A';
                 return ret;
+            };
+
+            inline bool getIsCaptureMove() const {
+                return this->isCaptureMove;
             };     
     };
 }

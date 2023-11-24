@@ -16,16 +16,21 @@ int main(int argc, char** argv) {
 
     
     std::vector<engine::ChessTile> test;
-    engine::ChessTile hae(0, 1); 
-    std::cout << test.size();
-    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(0,0));
-    std::cout << test.size() << "\n===\n";
+    std::cout << "\n===\n";
+    // Load Rook TestMovement
     virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/8/R3K2R");
     tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
     test = virtualChessEngine.getPossibleMoves(engine::ChessTile(0,1));
-    std::cout << test.size() << "\n";
+    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
     test = virtualChessEngine.getPossibleMoves(engine::ChessTile(0,7));
-    std::cout << test.size() << "\n";
+    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
+    // Load Bishop TestMovement
+    virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/8/2BK2R");
+    tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
+    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(2,7));
+    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
+    
+
     
     
     //tester->printBoard("8/8/8/8/4P3/8/8/8 w - - 0 1");

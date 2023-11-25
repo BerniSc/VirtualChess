@@ -16,30 +16,14 @@ int main(int argc, char** argv) {
 
     tester->runMovementTestConsole();
     
-    std::vector<engine::ChessTile> test;
-    std::cout << "\n===\n";
-    // Load Rook TestMovement
-    virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/8/R3K2R");
-    tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
-    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(0,1));
-    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
-    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(0,7));
-    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
-    // Load Bishop TestMovement
-    virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/4N3/8/3N4/8/2BK2R");
-    tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
-    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(3,5));
-    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
-    test = virtualChessEngine.getPossibleMoves(engine::ChessTile(4,3));
-    tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
-    virtualChessEngine.tryMove(engine::ChessTile(4,3), engine::ChessTile(2,2));
-    tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
-    std::cout << test.size();
+    std::cout << "\n=========\n";
 
-    //tester->testRook();
-    //tester->testKnight();
-    
-
+    tester->testRook();
+    getchar();
+    tester->testKnight();
+    getchar();
+    tester->testBishop();
+    getchar();
     
     
     //tester->printBoard("8/8/8/8/4P3/8/8/8 w - - 0 1");

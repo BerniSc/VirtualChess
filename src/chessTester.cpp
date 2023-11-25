@@ -120,7 +120,7 @@ void ChessTester::testRook() {
 }
 
 void ChessTester::testKnight() {
-    // Rook can move in all directions, capture and get hindered by own figures
+    // Knight can move in all directions, capture and get hindered by own figures
     std::string testFENPos1 = "rnbqkbnr/pppppppp/8/4N3/8/3N4/8/2BK2R";
     std::string testFENPos2 = "r1bqkbnr/1pp1pppp/2n5/8/2PpP3/7p/PP3PP1/RNBQKBNR b KQkq - 0 4";
 
@@ -142,3 +142,22 @@ void ChessTester::testKnight() {
     printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
     if(tmp.size() != 3) throw std::runtime_error("Assertation Knight pos2-2 failed");
 }
+
+void ChessTester::testBishop() {
+    // Bishop can move diagonally, capture, and get hindered by own figures
+    std::string testFENPos1 = "8/8/8/8/3B4/8/8/8 w - - 0 1";
+    std::string testFENPos2 = "rnbqkbnr/pppppppp/8/8/8/RNBQKBNR/8/8 w KQkq - 0 1";
+
+    std::vector<engine::ChessTile> tmp;
+
+    this->engine.loadFEN(testFENPos1);
+    tmp = engine.getPossibleMoves(engine::ChessTile(3, 4));  
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if (tmp.size() != 13) throw std::runtime_error("Assertation Bishop pos1-1 failed");
+
+    this->engine.loadFEN(testFENPos2);
+    tmp = engine.getPossibleMoves(engine::ChessTile(2, 5));
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if (tmp.size() != 10) throw std::runtime_error("Assertation Bishop pos2-1 failed");
+}
+

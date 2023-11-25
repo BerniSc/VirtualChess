@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
     virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
 
+    tester->runMovementTestConsole();
     
     std::vector<engine::ChessTile> test;
     std::cout << "\n===\n";
@@ -31,10 +32,12 @@ int main(int argc, char** argv) {
     tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
     test = virtualChessEngine.getPossibleMoves(engine::ChessTile(4,3));
     tester->printBoardWithHighlights(virtualChessEngine.getCurrentBoard(), test);
+    virtualChessEngine.tryMove(engine::ChessTile(4,3), engine::ChessTile(2,2));
+    tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
     std::cout << test.size();
 
-    tester->testRook();
-    tester->testKnight();
+    //tester->testRook();
+    //tester->testKnight();
     
 
     

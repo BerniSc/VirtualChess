@@ -45,11 +45,7 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         return allowedMoves; 
     }
 
-    std::cout << pos.first << "||" << pos.second << std::endl;
-
     char figure = board[pos.first][pos.second];
-
-    std::cout << "Checking Figure " << figure << " on x:" << pos.first << "| y:" << pos.second << std::endl;
 
     if(this->referenceMover)
         delete referenceMover;
@@ -103,6 +99,10 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
         retVal = true;
     }
 
-
     return retVal;
+}
+
+
+void engine::ChessEngine::move(engine::ChessTile source, engine::ChessTile target) {
+    this->currentBoard.move(source, target);
 }

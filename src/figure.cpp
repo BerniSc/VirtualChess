@@ -7,9 +7,15 @@ engine::Figure::~Figure() {
 }
 
 std::vector<engine::ChessTile> King::getPossibleMoves(char const board[8][8]) {
+    std::vector<engine::ChessTile> moves;
+    std::pair<int, int> curPos = position.getArrayNr();
 
+    return moves;
 }
 
+/**
+ * Pawn Section
+*/
 Pawn::Pawn(engine::ChessTile tile, char figure) {
     this->position = tile;
     this->identifier = figure;
@@ -56,6 +62,7 @@ std::vector<engine::ChessTile> Pawn::getPossibleMoves(char const board[8][8]) {
 
     return moves;
 }
+
 /**
  * Queen Section
 */
@@ -189,6 +196,9 @@ std::vector<engine::ChessTile> Knight::getPossibleMoves(const char board[8][8]) 
     return moves;
 }
 
+/**
+ * Rook Section 
+*/
 Rook::Rook(engine::ChessTile tile, char figure) {
     this->position = tile;
     this->identifier = figure;

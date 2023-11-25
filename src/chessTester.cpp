@@ -48,6 +48,53 @@ void ChessTester::printBoardWithHighlights(char(* board)[8], const std::vector<e
     }
 }
 
+void ChessTester::parseAndMove(std::string input) {
+    std::istringstream iss(input);
+
+    int fromRow, fromCol, toRow, toCol;
+
+    std::string sep;
+
+    // Assuming the input format is "fromRow fromCol - toRow toCol"
+    //if(!(iss >> fromCol >> fromRow >> std::ws >> std::skipws >> sep >> std::ws >> std::skipws >> toCol >> toRow)) {
+    if(!(iss >> fromCol >> fromRow >> toCol >> toRow)) {
+        std::cerr << "Invalid input format. Expected: fromRow fromCol - toRow toCol" << std::endl;
+        return;
+    }
+
+    // Make a move using the ChessEngine
+    engine::ChessTile src(fromCol, fromRow);
+    engine::ChessTile trg(toCol, toRow);
+    std::vector<engine::ChessTile> test = engine.getPossibleMoves(src); 
+    this->engine.tryMove(src, trg);    
+
+    this->printBoardWithHighlights(this->engine.getCurrentBoard(), test);
+}
+
+
+void ChessTester::runMovementTestConsole() {
+    std::string input;
+
+    while(true) {
+        // Read user input
+        std::cout << "Enter move (or 'quit' to exit): ";
+        std::getline(std::cin, input);
+
+        // Check if the user wants to quit
+        if (input == "quit") {
+            std::cout << "Exiting continuous test." << std::endl;
+            break;
+        }
+
+        // Parse and make the move
+        parseAndMove(input);
+
+        // Print the updated board or any other information
+        // depending on your requirements
+        // printBoard(...);
+    }
+}
+
 void ChessTester::testRook() {
     // Rook can move in all directions, capture and get hindered by own figures
     std::string testFENPos1 = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";

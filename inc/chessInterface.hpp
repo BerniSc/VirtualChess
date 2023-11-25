@@ -20,7 +20,7 @@ namespace engine {
     class Figure;
 
     // Class that contains the actuall internal representation of the board that is beeing played 
-    //    -> Provides only conversion functions from internal storage to other notation Form (Char array and FEN-String)
+    //    -> Provides STATIC conversion functions from internal storage to other notation Form (Char array and FEN-String)
     //    like to the external char[8][8], that can be used much more intuitively
     class ChessBoard {
         private:
@@ -28,10 +28,14 @@ namespace engine {
             static char arrayBoard[8][8];
             ChessBoard();                                                  // Private constructor -> Only usable in Friend (ChessEngine)
 
-            void move(ChessTile source, ChessTile target);
+            // Move a Piece from A -> B
+            void move(engine::ChessTile source, engine::ChessTile target);
 
+            // Needed to asign char (*)[8] to char[8][8]
+            void writeBoardInternaly(char (*)[8]);
+
+            // Reset the Board to its initial State -> Only callable from friend as it changes board uncontrolled
             void reset();
-
         public:
             // Returns the FEN String representing the Board
             static std::string board2string(const char board[8][8]);
@@ -44,18 +48,8 @@ namespace engine {
 
             ~ChessBoard();
 
-            inline void loadFEN(std::string fen) {
-                this->currentBoard = fen;
-                
-                char(*newBoard)[8] = string2board(currentBoard);
-                // Copy the values element by element
-                for (int row = 0; row < 8; row++) {
-                    for (int col = 0; col < 8; col++) {
-                        this->arrayBoard[col][row] = newBoard[col][row];
-                    }
-                }
-            }
-
+            // Load a FEN as the current Board
+            void loadFEN(std::string fen);
 
         friend ChessEngine;
     };

@@ -4,25 +4,32 @@
 #include <string>
 #include <iostream>
 
+#include <sstream>
+
 #include "chessInterface.hpp"
 
 struct ChessTester {
-    engine::ChessEngine& engine;
+    private:
+        void parseAndMove(std::string input);
+    public:
+        engine::ChessEngine& engine;
 
-    ChessTester(engine::ChessEngine&);
+        ChessTester(engine::ChessEngine&);
 
-    void printBoard(char(*board)[8]);
-    void printBoard(std::string board);
+        void printBoard(char(*board)[8]);
+        void printBoard(std::string board);
 
-    void printBoardWithHighlights(char(* board)[8], const std::vector<engine::ChessTile>& highlights);
+        void printBoardWithHighlights(char(* board)[8], const std::vector<engine::ChessTile>& highlights);
 
-    void testRook();
-    void testKnight();
-    void testBishop();
-    void testQueen();
-    void testPawn();
+        void runMovementTestConsole();
 
-    void printPos(engine::ChessTile tile);
+        void testRook();
+        void testKnight();
+        void testBishop();
+        void testQueen();
+        void testPawn();
+
+        void printPos(engine::ChessTile tile);
 };
 
 #endif

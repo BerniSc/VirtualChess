@@ -47,15 +47,26 @@ namespace engine {
                 return this->isCaptureMove;
             };
 
-            friend bool operator!=(const ChessTile& lhs, const ChessTile& rhs);     
+            friend bool operator!=(const ChessTile& lhs, const ChessTile& rhs);   
+            friend bool operator==(const ChessTile& lhs, const ChessTile& rhs);  
     };
 
-    bool operator!=(const ChessTile& lhs, const ChessTile& rhs) {
+    inline bool operator!=(const ChessTile& lhs, const ChessTile& rhs) {
         bool ret;
         if(lhs.x == rhs.x && lhs.y == rhs.y)
             ret = false;
         else
             ret = true;
+        
+        return ret;
+    }
+
+    inline bool operator==(const ChessTile& lhs, const ChessTile& rhs) {
+        bool ret;
+        if(lhs.x == rhs.x && lhs.y == rhs.y)
+            ret = true;
+        else
+            ret = false;
         
         return ret;
     }

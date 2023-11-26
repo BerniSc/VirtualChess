@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
 
     tester->printBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    virtualChessEngine.loadFEN("rnbqkbnr/8/8/8/8/8/3PP3/RNBQKBNR w KQkq - 0 1");
     tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
 
     tester->runMovementTestConsole();

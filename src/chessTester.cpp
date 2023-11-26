@@ -89,6 +89,8 @@ void ChessTester::runMovementTestConsole() {
         // Parse and make the move
         parseAndMove(input);
 
+        std::cout << (engine.checkCheck() ? "true" : "false") << "\n";
+
         // Print the updated board or any other information
         // depending on your requirements
         // printBoard(...);

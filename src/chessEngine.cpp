@@ -102,7 +102,82 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
     return retVal;
 }
 
-
 void engine::ChessEngine::move(engine::ChessTile source, engine::ChessTile target) {
     this->currentBoard.move(source, target);
+}
+
+char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const board[8][8]) const {
+    // TODO -> Store KingPos somewhere and catch non-king queries
+    int kingPosX = -1, kingPosY = -1;
+    for(int x = 0; x < 8; x++) {
+        for(int y = 0; y < 8; y++) {
+            if(board[x][y] == figure) {
+                kingPosX = x;
+                kingPosY = y;
+                break;
+            }
+        }
+    }
+
+    std::cout << "KingPos: " << kingPosX << "   " << kingPosY << std::endl; 
+
+    engine::ChessTile kingTile(kingPosX, kingPosY);
+
+    Knight referenceKnight(kingTile, (std::isupper(figure) ? 'N' : 'n'));
+    Rook referenceRook(kingTile, (std::isupper(figure) ? 'R' : 'r'));
+    Bishop referenceBishop(kingTile, (std::isupper(figure) ? 'B' : 'b'));
+    Queen referenceQueen(kingTile, (std::isupper(figure) ? 'Q' : 'q'));
+    Pawn referencePawn(kingTile, (std::isupper(figure) ? 'P' : 'p'));
+
+    // Get possible moves for each piece
+    std::vector<engine::ChessTile> movesKnight = referenceKnight.getPossibleMoves(board);
+    std::vector<engine::ChessTile> movesRook = referenceRook.getPossibleMoves(board);
+    std::vector<engine::ChessTile> movesBishop = referenceBishop.getPossibleMoves(board);
+    std::vector<engine::ChessTile> movesQueen = referenceQueen.getPossibleMoves(board);
+    std::vector<engine::ChessTile> movesPawn = referencePawn.getPossibleMoves(board);
+
+    // Check if any of the pieces can capture the king
+    for(const auto& move : movesKnight) {
+        std::pair<int,int> pos = move.getArrayNr();
+        if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('N'))
+            return true;
+    }
+
+    std::cout << "N\n";
+
+    for(const auto& move : movesRook) {
+        std::pair<int,int> pos = move.getArrayNr();
+        if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('R'))
+            return true;
+    }
+
+    std::cout << "R\n";
+
+    for(const auto& move : movesBishop) {
+        std::pair<int,int> pos = move.getArrayNr();
+        if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('B'))
+            return true;
+    }
+
+    std::cout << "B\n";
+
+    for(const auto& move : movesQueen) {
+        std::pair<int,int> pos = move.getArrayNr();
+        if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('Q')) {
+            std::cout << "MEQ: " << pos.first << "  " << pos.second << "\n";
+            return true;
+        }
+    }
+
+    std::cout << "Q\n";
+
+    for(const auto& move : movesPawn) {
+        std::pair<int,int> pos = move.getArrayNr();
+        if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('P'))
+            return true;
+    }
+
+    std::cout << "P\n";
+
+    return false;
 }

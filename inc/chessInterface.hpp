@@ -69,6 +69,9 @@ namespace engine {
                     engine::ChessTile lastCheckedTile;
                     std::vector<engine::ChessTile> lastPossibleMoves;
 
+                    char checkCheck(char figure, char const board[8][8]) const;
+                    char checkCheckMate() const;
+
                     // Check a Move by making a Pseudo-Move and check for check ->
                     bool checkPseudoMove();
 
@@ -80,8 +83,6 @@ namespace engine {
             // Actually do the Move
             void move(engine::ChessTile source, engine::ChessTile target);
 
-            char checkCheck() const;
-            char checkCheckMate() const;
         public:
             // Reset the Board and all its Pieces -> Restart for new Game
             // Sets the currentBoard using class ChessBoard
@@ -99,6 +100,10 @@ namespace engine {
             // DEBUG ONLY
             inline void loadFEN(std::string string) {
                 this->currentBoard.loadFEN(string);
+            }
+
+            inline bool checkCheck() {
+                return this->moveGen->checkCheck('k', this->currentBoard.getBoardArray());
             }
 
             ChessEngine();

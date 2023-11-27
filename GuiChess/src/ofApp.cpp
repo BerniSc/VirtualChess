@@ -18,6 +18,9 @@ void ofApp::update(){
 
 	//std::cout << windowHeight << "		" << windowWidth << std::endl;
 
+	//std::cout << scalingFactorTile << "		" << std::endl;
+	//std::cout << "Chess Square Dimension: " << chessSquareDimension << std::endl;
+
 	// Scale acording to the SMAAAALLLLER Side of the Window, as it is more important to get the Image to fit
 	int min = std::min(windowHeight, windowWidth);
 
@@ -26,98 +29,36 @@ void ofApp::update(){
 
 	// Cap the Value so no State smaller than the Default State is possible
 	this->scalingFactorTile = scalingFactorTile <= 1.0 ? 1.0 : scalingFactorTile;
+
+	this->CHESS_BOARD_PLATE_DIMESION = this->start_CHESS_BOARD_PLATE_DIMESION * this->scalingFactorTile;
+	this->CHESS_BOARD_PLATE_GAP = this->start_CHESS_BOARD_PLATE_GAP * this->scalingFactorTile;
+	this->CHESS_BOARD_FOCUS_POINT_RADIUS = this->start_CHESS_BOARD_FOCUS_POINT_RADIUS * this->scalingFactorTile;
+
+	chessSquareDimension = CHESS_BOARD_PLATE_DIMESION * CHESS_BOARD_LENGTH + CHESS_BOARD_PLATE_GAP * 7;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	//Chess Board
+	
+	//Displaying th GUI of the Chess Game
+
+	//Setting spacer frame
 	ofTranslate(32, 32);
 
-	//std::cout << scalingFactorTile << std::endl;
+	//Draw ChessBoard
+	drawChessBoardTiles();
 
-	this->CHESS_BOARD_PLATE_DIMESION = this->start_CHESS_BOARD_PLATE_DIMESION * this->scalingFactorTile;
-	this->CHESS_BOARD_PLATE_GAP = this->start_CHESS_BOARD_PLATE_GAP * this->scalingFactorTile;
+	//Draw overlay for possibilities to move
+	drawHelpfulOverlay();
 
-	ofSetColor(240);
-	for(int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		for(int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-			ofDrawRectRounded(
-				i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * i,
-				j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * j,
-				CHESS_BOARD_PLATE_DIMESION ,
-				CHESS_BOARD_PLATE_DIMESION ,
-				CHESS_BOARD_PLATE_RADIUS);
-		};
-	};
+	//Draw coordinates labeling
+	drawCoordinatesLabeling();
 
-	ofSetColor(41, 254, 47, 60);
-	ofDrawRectRounded(
-		0,
-		0,
-		CHESS_BOARD_PLATE_DIMESION ,
-		CHESS_BOARD_PLATE_DIMESION ,
-		CHESS_BOARD_PLATE_RADIUS
-	);
-	ofSetColor(255, 67, 40, 60);
-	ofDrawRectRounded(
-		64 + 5,
-		64 + 5,
-		CHESS_BOARD_PLATE_DIMESION ,
-		CHESS_BOARD_PLATE_DIMESION ,
-		CHESS_BOARD_PLATE_RADIUS
-	);
-	ofSetColor(255, 153, 40, 100);
-	ofDrawRectRounded(
-		128 + 10,
-		128 + 10,
-		CHESS_BOARD_PLATE_DIMESION ,
-		CHESS_BOARD_PLATE_DIMESION ,
-		CHESS_BOARD_PLATE_RADIUS
-	);
+	//Draw red doits 
+	drawRedDoits();
 
-	ofSetColor(240);
-	string chessAlphabet[8] = { "A", "B", "C", "D", "E", "F", "G", "H" };
-	string chessNumbers[8] = { "1", "2", "3", "4", "5", "6", "7", "8" };
-	
-	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		// Draw Text mirrored
-		ofPushMatrix();
-		ofScale(1, -1);  // Mirror in the horizontal direction
-		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + i * CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_CORRECTION,
-			+ 3 * CHESS_BOARD_PLATE_GAP );
-		ofPopMatrix();
-	}
-
-	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + i * CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_CORRECTION,
-			CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP  + CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
-	}
-
-	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-		font.drawString(chessNumbers[7-j], -CHESS_BOARD_PLATE_GAP  - CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION,
-			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION);
-	}
-
-	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-		// Draw Text mirrored
-		ofPushMatrix();
-		ofScale(1, -1);  // Mirror in the horizontal direction
-		font.drawString(chessNumbers[j], CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP  - CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION,
-			j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_DIMESION / 2  + j * CHESS_BOARD_PLATE_GAP  + CHESS_LABEL_CORRECTION - this->windowHeight + 64 + this->fontWidth /*Error with size of text*/);
-		ofPopMatrix();
-	}
-
-	ofSetColor(263, 47, 0);
-	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
-		for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
-			ofDrawCircle(
-				i * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * i + CHESS_BOARD_PLATE_DIMESION / 2 ,
-				j * CHESS_BOARD_PLATE_DIMESION  + CHESS_BOARD_PLATE_GAP  * j + CHESS_BOARD_PLATE_DIMESION / 2 ,
-				CHESS_BOARD_FOCUS_POINT_RADIUS);
-		};
-	};
-
-
+	//Draw current indicator
+	drawIndicator();
 
 	//Image
 	/*
@@ -186,6 +127,168 @@ void ofApp::draw(){
 	ofNoFill();
 
 	ofDrawBezier(704, 64, 736, 128, 768, 160, 800, 64);*/
+}
+
+//--------------------------------------------------------------
+void ofApp::drawChessBoardTiles() {
+	//Function for drawing the ChessBoard(-Overlay)
+	ofSetColor(240);
+	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
+		for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
+			ofDrawRectRounded(
+				i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * i,
+				j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * j,
+				CHESS_BOARD_PLATE_DIMESION,
+				CHESS_BOARD_PLATE_DIMESION,
+				CHESS_BOARD_PLATE_RADIUS);
+		};
+	};
+}
+
+//--------------------------------------------------------------
+void ofApp::drawHelpfulOverlay() {
+
+	//Coordiantes (x,y) (left upper corner => (0,0))
+	int k1[2] = { 0,0 };
+	int k2[2] = { 1,1 };
+	int k3[2] = { 2,4 };
+	//Function for drawing the ChessBoard(-Overlay)
+	
+	//Overlay for possibilities to move
+	ofSetColor(41, 254, 47, 60);
+	ofDrawRectRounded(
+		k1[0] * CHESS_BOARD_PLATE_DIMESION + k1[0] * CHESS_BOARD_PLATE_GAP,
+		k1[1] * CHESS_BOARD_PLATE_DIMESION + k1[1] * CHESS_BOARD_PLATE_GAP,
+		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_RADIUS
+	);
+
+	//Overlay for moves that are blocked
+	ofSetColor(255, 67, 40, 60);
+	ofDrawRectRounded(
+		k2[0] * CHESS_BOARD_PLATE_DIMESION + k2[0] * CHESS_BOARD_PLATE_GAP,
+		k2[1] * CHESS_BOARD_PLATE_DIMESION + k2[1] * CHESS_BOARD_PLATE_GAP,
+		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_RADIUS
+	);
+
+	//Overlay for possibilities to capture a figure
+	ofSetColor(255, 153, 40, 100);
+	ofDrawRectRounded(
+		k3[0] * CHESS_BOARD_PLATE_DIMESION + k3[0] * CHESS_BOARD_PLATE_GAP,
+		k3[1] * CHESS_BOARD_PLATE_DIMESION + k3[1] * CHESS_BOARD_PLATE_GAP,
+		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_DIMESION,
+		CHESS_BOARD_PLATE_RADIUS
+	);
+}
+
+//--------------------------------------------------------------
+void ofApp::drawCoordinatesLabeling() {
+
+	// Drawing Labeling for Chess Coordinates
+
+	// alphabet mirrored
+	ofSetColor(240);
+	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
+		// Draw Text mirrored
+		ofPushMatrix();
+		ofScale(1, -1);  // Mirror in the horizontal direction
+		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + i * CHESS_BOARD_PLATE_GAP - CHESS_LABEL_CORRECTION,
+			+ 3 * CHESS_BOARD_PLATE_GAP);
+		ofPopMatrix();
+	}
+
+	// alphabet
+	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
+		font.drawString(chessAlphabet[i], i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + i * CHESS_BOARD_PLATE_GAP - CHESS_LABEL_CORRECTION,
+			CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP + CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION);
+	}
+
+	// text
+	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
+		font.drawString(chessNumbers[7 - j], -CHESS_BOARD_PLATE_GAP - CHESS_LABEL_FIRST_NUMBER_COLUMN_CORRECTION,
+			j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + j * CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION);
+	}
+
+	// text mirrored
+	for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
+		// Draw Text mirrored
+		ofPushMatrix();
+		ofScale(1, -1);  // Mirror in the horizontal direction
+		font.drawString(chessNumbers[j], CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_LENGTH * CHESS_BOARD_PLATE_GAP - CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION,
+			j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_DIMESION / 2 + j * CHESS_BOARD_PLATE_GAP + CHESS_LABEL_CORRECTION - 8.5 * CHESS_BOARD_PLATE_DIMESION);
+		ofPopMatrix();
+	}
+	
+}
+
+//--------------------------------------------------------------
+void ofApp::drawRedDoits() {
+
+	// Drawing red doits for calibration
+	ofSetColor(263, 47, 0);
+
+	ofDrawCircle(
+		0,
+		0,
+		CHESS_BOARD_FOCUS_POINT_RADIUS);
+	ofDrawCircle(
+		CHESS_BOARD_PLATE_DIMESION * CHESS_BOARD_LENGTH + CHESS_BOARD_PLATE_GAP * 7,
+		0,
+		CHESS_BOARD_FOCUS_POINT_RADIUS);
+	ofDrawCircle(
+		0,
+		CHESS_BOARD_PLATE_DIMESION * CHESS_BOARD_LENGTH + CHESS_BOARD_PLATE_GAP * 7,
+		CHESS_BOARD_FOCUS_POINT_RADIUS);
+}
+
+//--------------------------------------------------------------
+void ofApp::drawIndicator() {
+
+	if (indicatorPressed) {      //Input from Camara-Detection
+
+		ofSetColor(105, 3, 107);
+
+		calculateIndicatorFixCoordinates();
+
+		ofDrawCircle(
+			indicatorCoordinaters[0] * ( CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP ) + CHESS_BOARD_PLATE_DIMESION / 2,
+			indicatorCoordinaters[1] * ( CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP ) + CHESS_BOARD_PLATE_DIMESION / 2,
+			CHESS_BOARD_FOCUS_POINT_RADIUS);
+	}
+	else {
+		ofSetColor(120, 120, 120);
+
+		calculateIndicatorFlexCoordinates();
+
+		ofDrawCircle(
+			indicatorPixels[0],
+			indicatorPixels[1],
+			CHESS_BOARD_FOCUS_POINT_RADIUS);
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::calculateIndicatorFixCoordinates(){
+
+	//Conversion from Camera to GUI
+	float plateDivision = maxCameraDimension / CHESS_BOARD_LENGTH;
+
+	this->indicatorCoordinaters[0] = floor(xCamera / plateDivision);
+	this->indicatorCoordinaters[1] = floor(yCamera / plateDivision);
+
+}
+
+//--------------------------------------------------------------
+void ofApp::calculateIndicatorFlexCoordinates() {
+
+	//Conversion from Camera pixels to GUI pixels
+	this->indicatorPixels[0] = ( xCamera * chessSquareDimension) / maxCameraDimension;
+	this->indicatorPixels[1] = ( yCamera * chessSquareDimension) / maxCameraDimension;
+
 }
 
 //--------------------------------------------------------------

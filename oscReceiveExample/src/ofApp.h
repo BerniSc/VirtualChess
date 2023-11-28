@@ -12,6 +12,9 @@
 // demonstrates receiving and processing OSC messages with an ofxOscReceiver,
 // use in conjunction with the oscSenderExample
 class ofApp : public ofBaseApp{
+	private:
+		bool check = false;
+	
 	public:
 
 		void setup();

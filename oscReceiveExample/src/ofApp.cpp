@@ -3,7 +3,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	ofSetWindowTitle("oscReceiveExample");
+	ofSetWindowTitle("Empfänger");
 	//ofSetFrameRate(60); // run at 60 fps
 
 	// listen on the given port
@@ -43,21 +43,26 @@ void ofApp::update(){
 }
 
 
-bool ofApp::checkDistance() const {
+bool ofApp::checkDistance() {
 	float distance = sqrt((mouseXfZ - mouseXfD)*(mouseXfZ - mouseXfD) + (mouseYfZ - mouseYfD)*(mouseYfZ - mouseYfD));
 	ofLog() << "Distance: " << distance;
 
-	if (distance <= 30){
-		ofLog() << "True";
-		return true;
+	if (distance <= 30 && distance != 0){
+		check = true;
+		ofLog() << check;
+		return check;
 	}
 	
 	if (distance >= 40){
-		ofLog() << "False";
-		return false;
+		check = false;
+		ofLog() << check;
+		return check;
 	}
-	
-	return false;
+
+	else{
+		ofLog() << check;
+		return check;
+	}
 }
 
 

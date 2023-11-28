@@ -7,8 +7,6 @@ int main() {
     bp::ipstream pipe_stream;
     bp::opstream pipe_stream_in;
 
-    //bp::child child("/bin/cat", bp::std_out > pipe_stream, bp::std_in < pipe_stream_in);
-
     bp::child child("/usr/bin/python3 uciTest.py", bp::std_out > pipe_stream, bp::std_in < pipe_stream_in);
 
     // Send a message to the child process and print the response
@@ -31,11 +29,11 @@ int main() {
         std::cout << "Enter a message (or 'exit' to quit): ";
         std::getline(std::cin, userMessage);
 
+        sendMessage(userMessage);
+
         if(userMessage == "exit") {
             break;
         }
-
-        sendMessage(userMessage);
     }
 
     // Wait for the child process to finish

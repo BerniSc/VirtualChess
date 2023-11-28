@@ -37,11 +37,11 @@ void ChessTester::printBoardWithHighlights(char(* board)[8], const std::vector<e
             if(isHighlighted) {
                 // Print all CaptureMoves red and Free Moves green
                 if(!isCaptureMove)
-                    std::cout << "\033[32m" << (board[col][row] == 0 ? '*' :  board[col][row]) << "\033[0m";
+                    std::cout << "  " << "\033[32m" << (board[col][row] == 0 ? '*' :  board[col][row]) << "\033[0m";
                 else
-                    std::cout << "\033[31m" << (board[col][row] == 0 ? '*' :  board[col][row]) << "\033[0m";
+                    std::cout << "  " << "\033[31m" << (board[col][row] == 0 ? '*' :  board[col][row]) << "\033[0m";
             } else {
-                std::cout << (board[col][row] == 0 ? '*' :  board[col][row]);
+                std::cout << "  " << (board[col][row] == 0 ? '*' :  board[col][row]);
             }
         }
         std::cout << "\n";
@@ -89,11 +89,7 @@ void ChessTester::runMovementTestConsole() {
         // Parse and make the move
         parseAndMove(input);
 
-        std::cout << (engine.checkCheck() ? "true" : "false") << "\n";
-
-        // Print the updated board or any other information
-        // depending on your requirements
-        // printBoard(...);
+        std::cout << "Schach: " << (engine.checkCheck() ? "true" : "false") << "\n";
     }
 }
 

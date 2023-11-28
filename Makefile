@@ -1,7 +1,7 @@
 COMPILER = "g++"
 PROJECTNAME = bin/chessEngine
-SOURCE = main.cpp src/chessBoard.cpp src/chessEngine.cpp src/chessTester.cpp src/utility.cpp src/figure.cpp
-# SOURCE = UCI_Test/uciTest.cpp
+#SOURCE = main.cpp src/chessBoard.cpp src/chessEngine.cpp src/chessTester.cpp src/utility.cpp src/figure.cpp
+SOURCE = UCI_Test/uciTest.cpp
 FLAGS = -std=c++17 -pthread
 
 $(PROJECTNAME) : $(SOURCE)
@@ -9,7 +9,7 @@ $(PROJECTNAME) : $(SOURCE)
 
 .PHONY: clean run
 clean:
-		rm bin/chessEngine
+		rm ./bin/chessEngine
 
 run:
 		./$(PROJECTNAME)

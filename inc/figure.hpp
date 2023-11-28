@@ -21,6 +21,9 @@ namespace engine {
 
 struct Pawn : public engine::Figure {
     std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
+    // Provides a way of knowing wether the Pawn is a true Pawn or a Fake Pawn (Emulated by King for Checking Check) -> King sets FakePawn 
+    //  -> Special Moves that depend on the Pawn Position are Prohibited -> TODO Use
+    bool fakePawn = false;
 
     Pawn(engine::ChessTile position, char identifier);
 };

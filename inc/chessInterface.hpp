@@ -28,6 +28,9 @@ namespace engine {
             static char arrayBoard[8][8];
             ChessBoard();                                                  // Private constructor -> Only usable in Friend (ChessEngine)
 
+            // TODO -> Add var that shows wheter the current Board is castleable and a fuction to perform the Casteling
+            // https://en.wikipedia.org/wiki/Castling
+
             // Move a Piece from A -> B
             void move(engine::ChessTile source, engine::ChessTile target);
 
@@ -73,7 +76,7 @@ namespace engine {
                     char checkCheckMate() const;
 
                     // Check a Move by making a Pseudo-Move and check for check ->
-                    bool checkPseudoMove();
+                    bool checkPseudoMove(char figure);
 
                     std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8], engine::ChessTile tile);
             };

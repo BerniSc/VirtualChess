@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     virtualChessEngine.loadFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     virtualChessEngine.loadFEN("rnbqkbnr/8/8/8/8/8/3PP3/RNBQKBNR w KQkq - 0 1");
     tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
-
+    std::cout << "Converted FEN: " << engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()) << "\n";
     tester->runMovementTestConsole();
     
     std::cout << "\n=========\n";

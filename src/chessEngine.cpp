@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 engine::ChessEngine::ChessEngine() {
-    this->moveGen = new MoveGenerator();
+    this->moveGen = new MoveGenerator(this);
 }
 
 engine::ChessEngine::~ChessEngine() {
@@ -24,7 +24,7 @@ void engine::ChessEngine::reset() {
 }
 
 
-engine::ChessEngine::MoveGenerator::MoveGenerator() {
+engine::ChessEngine::MoveGenerator::MoveGenerator(engine::ChessEngine* engine) : super(engine) {
     std::cout << "Creted MoveGen\n";
 }
 
@@ -35,6 +35,7 @@ engine::ChessEngine::MoveGenerator::~MoveGenerator() {
 
 std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMoves(char const board[8][8], engine::ChessTile tile) {
     std::vector<engine::ChessTile>& allowedMoves = this->lastPossibleMoves;
+    std::vector<engine::ChessTile> allowedSpecialMoves;
 
     this->lastCheckedTile = tile;
 
@@ -54,6 +55,7 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     switch(toupper(figure)) {
         case constants::ROOK :
             referenceMover = new Rook(tile, figure);
+
             break;
         case constants::KNIGHT :
             //throw std::runtime_error("Feature KNIGHT MOVE not supportet");
@@ -180,4 +182,19 @@ char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const boar
     std::cout << "P\n";
 
     return false;
+}
+
+std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getCastleMoves(char figure, char const board[8][8]) const {
+    if(isupper(figure)) {
+        // Add the Castling Move
+        // TODO -> Maybe move away from using lastCheckedTiles
+        if(this->lastCheckedTile.getArrayNr().first == 0 && super->currentBoard.getCastleable().find((isupper(figure) ? 'Q' : 'q')) != std::string::npos) {
+            // Check if the squares between the king and the rook are empty
+            if(board[1][0] == 0 && board[2][0] == 0 && board[3][0]) {
+            
+            }
+        }
+    } else {
+
+    }
 }

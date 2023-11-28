@@ -24,12 +24,16 @@ namespace engine {
     //    like to the external char[8][8], that can be used much more intuitively
     class ChessBoard {
         private:
+            // Static as needed in static Functions
             static std::string currentBoard;
             static char arrayBoard[8][8];
+            static char turn;
+            
             ChessBoard();                                                  // Private constructor -> Only usable in Friend (ChessEngine)
 
             // TODO -> Add var that shows wheter the current Board is castleable and a fuction to perform the Casteling
             // https://en.wikipedia.org/wiki/Castling
+            static std::string castleable;
 
             // Move a Piece from A -> B
             void move(engine::ChessTile source, engine::ChessTile target);
@@ -48,6 +52,7 @@ namespace engine {
             // Get the current Board
             char (*getBoardArray() const)[8];
             std::string getBoardString() const;
+            std::string getCastleable() const;
 
             ~ChessBoard();
 
@@ -64,9 +69,10 @@ namespace engine {
             struct MoveGenerator {
                 private:
                     engine::Figure *referenceMover;
+                    engine::ChessEngine* super;
 
                 public:
-                    MoveGenerator();
+                    MoveGenerator(ChessEngine* engine);
                     ~MoveGenerator();
 
                     engine::ChessTile lastCheckedTile;
@@ -74,6 +80,8 @@ namespace engine {
 
                     char checkCheck(char figure, char const board[8][8]) const;
                     char checkCheckMate() const;
+
+                    std::vector<engine::ChessTile> getCastleMoves(char figure, char const board[8][8]) const;
 
                     // Check a Move by making a Pseudo-Move and check for check ->
                     bool checkPseudoMove(char figure);

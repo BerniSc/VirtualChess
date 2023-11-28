@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "chessTile.hpp"
+#include "chessInterface.hpp"
 
 namespace engine {
     struct Figure {
@@ -61,9 +62,13 @@ struct Knight : public engine::Figure {
 };
 
 struct Rook : public engine::Figure {
-    std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
+    private:
+        std::string castleable;
 
-    Rook(engine::ChessTile position, char identifier);
+    public:
+        std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) override;
+
+        Rook(engine::ChessTile position, char identifier);
 };
 
 

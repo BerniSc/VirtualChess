@@ -7,9 +7,12 @@
 
 char engine::ChessBoard::arrayBoard[8][8];
 std::string engine::ChessBoard::currentBoard;
+char engine::ChessBoard::turn = 'w';
+std::string engine::ChessBoard::castleable = "KQkq";
 
 engine::ChessBoard::ChessBoard() {
-
+    turn = 'w';
+    reset();
 }
 
 engine::ChessBoard::~ChessBoard() {
@@ -81,6 +84,11 @@ std::string engine::ChessBoard::board2string(const char board[8][8]) {
             fen += '/';
     }
 
+    fen += " ";
+    fen += turn;
+    fen += " ";
+    
+
     return fen;
 }
 
@@ -90,6 +98,10 @@ char (*engine::ChessBoard::getBoardArray() const)[8] {
 
 std::string engine::ChessBoard::getBoardString() const {
     return this->currentBoard;
+}
+
+std::string engine::ChessBoard::getCastleable() const {
+    return this->castleable;
 }
 
 void engine::ChessBoard::writeBoardInternaly(char (* array)[8]) {
@@ -112,6 +124,19 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
     std::pair<int,int> targetPos = target.getArrayNr();
 
     char figureSrc = this->arrayBoard[sourcePos.first][sourcePos.second];
+
+    // Remove the specific Castleable Flag if a move blocks it 
+    if(this->castleable.size() != 0 && toupper(figureSrc) == 'K') {
+        this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'K' : 'k')), castleable.end());
+        this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'Q' : 'q')), castleable.end());
+    }
+
+    if(this->castleable.size() != 0 && toupper(figureSrc) == 'R') {
+        if(sourcePos.first == 0)
+            this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'Q' : 'q')), castleable.end());
+        if(sourcePos.first == 7)
+            this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'K' : 'k')), castleable.end());
+    }
 
     if(!target.getIsCaptureMove()) {
         this->arrayBoard[sourcePos.first][sourcePos.second] = 0;

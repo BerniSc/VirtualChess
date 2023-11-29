@@ -324,7 +324,6 @@ std::vector<engine::ChessTile> Rook::getPossibleMoves(const char board[8][8]) {
     }
 
     // Check possible moves downwards -> MemSafe as for Loop won't start if out of bounds
-    std::cout << "x: " << curPos.second << "\n";
     for (int j = curPos.second - 1; j >= 0; j--) {
         if (board[curPos.first][j] == 0) {
             moves.push_back(engine::ChessTile(curPos.first, j));

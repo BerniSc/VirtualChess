@@ -24,7 +24,7 @@ void engine::ChessEngine::reset() {
 }
 
 
-engine::ChessEngine::MoveGenerator::MoveGenerator(engine::ChessEngine* engine) : super(engine) {
+engine::ChessEngine::MoveGenerator::MoveGenerator(engine::ChessEngine* engine) : referenceMover(nullptr), super(engine) {
     std::cout << "Creted MoveGen\n";
 }
 
@@ -48,7 +48,7 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
 
     char figure = board[pos.first][pos.second];
 
-    if(this->referenceMover)
+    if(this->referenceMover != nullptr)
         delete referenceMover;
 
     // Parse the current Tile content
@@ -84,13 +84,10 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
 
     // If the Current Board is castleable and the tried Figure is a King or a Rook add the CastleMoves
     if(super->currentBoard.castleable != "-") {
-        auto castleMoves = this->getCastleMoves(figure, board);
-        if(toupper(figure) == 'K')
-            for(auto move : castleMoves)
-                allowedMoves.push_back(move.first);
-        if(toupper(figure) == 'R')
-            for(auto move : castleMoves)
-                allowedMoves.push_back(move.second);
+        std::vector<engine::ChessTile> castleMoves = this->getCastleMoves(figure, board);
+        for(engine::ChessTile& move : castleMoves) {
+            allowedMoves.push_back(move);
+        }
     }
 
     this->lastPossibleMoves = allowedMoves;
@@ -106,8 +103,17 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
         getPossibleMoves(source);
     
     // If TargetTile is contained in possible Moves do the Move
-    if(std::find(this->moveGen->lastPossibleMoves.begin(), this->moveGen->lastPossibleMoves.end(), target) != this->moveGen->lastPossibleMoves.end()) {
+    auto iter = std::find(this->moveGen->lastPossibleMoves.begin(), this->moveGen->lastPossibleMoves.end(), target);
+    if(iter != this->moveGen->lastPossibleMoves.end()) {
         this->move(source, target);
+
+        if((*iter.base()).getIsCastleMove()) {
+            std::pair<engine::ChessTile, engine::ChessTile> correspondingMove = moveGen->getOpposingCastleMove(target);
+            std::cout << "Was here at castleCheck " << correspondingMove.first.getArrayNr().first << "     " << correspondingMove.first.getArrayNr().second << "\n";
+            this->move(correspondingMove.first, correspondingMove.second);
+        }
+
+
         retVal = true;
     }
 
@@ -140,15 +146,11 @@ bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile,
             return true;
     }
 
-    std::cout << "N\n";
-
     for(const auto& move : movesRook) {
         std::pair<int,int> pos = move.getArrayNr();
         if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('R'))
             return true;
     }
-
-    std::cout << "R\n";
 
     for(const auto& move : movesBishop) {
         std::pair<int,int> pos = move.getArrayNr();
@@ -156,25 +158,18 @@ bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile,
             return true;
     }
 
-    std::cout << "B\n";
-
     for(const auto& move : movesQueen) {
         std::pair<int,int> pos = move.getArrayNr();
         if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('Q')) {
-            std::cout << "MEQ: " << pos.first << "  " << pos.second << "\n";
             return true;
         }
     }
-
-    std::cout << "Q\n";
 
     for(const auto& move : movesPawn) {
         std::pair<int,int> pos = move.getArrayNr();
         if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('P'))
             return true;
     }
-
-    std::cout << "P\n";
 
     return false;
 }
@@ -200,9 +195,37 @@ char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const boar
     return this->checkUnderSiege(kingTile, figure, board);
 }
 
-std::vector<std::pair<engine::ChessTile, engine::ChessTile>> engine::ChessEngine::MoveGenerator::getCastleMoves(char figure, char const board[8][8]) const {
-    std::vector<std::pair<engine::ChessTile, engine::ChessTile>> castleMoves;
-    std::pair<engine::ChessTile, engine::ChessTile> castleMove;
+// TODO -> Let the GUI allow to distinguish between Rook Move and Rook Castle Move
+std::pair<engine::ChessTile, engine::ChessTile> engine::ChessEngine::MoveGenerator::getOpposingCastleMove(const engine::ChessTile& move) const {
+    std::pair<int, int> pos = move.getArrayNr();
+
+    // Return the Source of the Opposite move as well as its Target
+    std::pair<engine::ChessTile, engine::ChessTile> oppositeMove;
+
+    if(pos.first == 2) {
+        // Queenside castling
+        oppositeMove.first = engine::ChessTile(0, pos.second, false, true);
+        oppositeMove.second = engine::ChessTile(3, pos.second, false, true);
+    } else if(pos.first == 3) {
+        // Queenside castling (rook move)
+        oppositeMove.first = engine::ChessTile(4, pos.second, false, true);
+        oppositeMove.second = engine::ChessTile(2, pos.second, false, true);
+    } else if(pos.first == 6) {
+        // Kingside castling
+        oppositeMove.first = engine::ChessTile(7, pos.second, false, true);
+        oppositeMove.second = engine::ChessTile(5, pos.second, false, true);
+    } else if(pos.first == 5) {
+        // Kingside castling (rook move)
+        oppositeMove.first = engine::ChessTile(4, pos.second, false, true);
+        oppositeMove.second = engine::ChessTile(6, pos.second, false, true);
+    }
+
+    return oppositeMove;
+}
+
+std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getCastleMoves(char figure, char const board[8][8]) const {
+    std::vector<engine::ChessTile> castleMoves;
+    engine::ChessTile castleMove;
     int yCoordinate = (isupper(figure) ? 7 : 0);
 
     // Checks wheter the current Move is a possible Queenside Castle (The calling Figure is either at x=0 (Left Rook) or the King
@@ -221,10 +244,13 @@ std::vector<std::pair<engine::ChessTile, engine::ChessTile>> engine::ChessEngine
             movementSpacesClear = movementSpacesClear && !(this->checkUnderSiege(engine::ChessTile(4, yCoordinate), figure, board));
             // Check if the King is NOT in Check and the Tiles in between are not under Siege
             if(!(this->checkCheck((isupper(figure) ? 'K' : 'k'), board)) && movementSpacesClear) {
-                // The Move for the King -> No Capture but Castle
-                castleMove.first = engine::ChessTile(2, yCoordinate, false, true);
-                // The Move for the Rook -> No Capture but Castle
-                castleMove.second = engine::ChessTile(3, yCoordinate, false, true);
+                if(toupper(figure) == 'K') {
+                    // The Move for the King -> No Capture but Castle
+                    castleMove = engine::ChessTile(2, yCoordinate, false, true);
+                } else {
+                    // The Move for the Rook -> No Capture but Castle
+                    castleMove = engine::ChessTile(3, yCoordinate, false, true);
+                }
                 castleMoves.push_back(castleMove);
             }
         }
@@ -238,15 +264,19 @@ std::vector<std::pair<engine::ChessTile, engine::ChessTile>> engine::ChessEngine
             movementSpacesClear = !this->checkUnderSiege(engine::ChessTile(5, yCoordinate), figure, board);
             movementSpacesClear = movementSpacesClear && !this->checkUnderSiege(engine::ChessTile(6, yCoordinate), figure, board);
             // Check if the King is NOT in Check and the Tiles in between are not under Siege
-            if(!this->checkCheck((isupper(figure) ? 'K' : 'k'), board) && movementSpacesClear) {
-                // The Move for the King -> No Capture but Castle
-                castleMove.first = engine::ChessTile(6, yCoordinate, false, true);
-                // The Move for the Rook -> No Capture but Castle
-                castleMove.second = engine::ChessTile(5, yCoordinate, false, true);
+            if(!(this->checkCheck((isupper(figure) ? 'K' : 'k'), board)) && movementSpacesClear) {
+                if(toupper(figure) == 'K') {
+                    // The Move for the King -> No Capture but Castle
+                    castleMove = engine::ChessTile(6, yCoordinate, false, true);
+                } else {
+                    // The Move for the Rook -> No Capture but Castle
+                    castleMove = engine::ChessTile(5, yCoordinate, false, true);
+                }
                 castleMoves.push_back(castleMove);
             }
         }
     }
 
+    std::cout << "Added " << castleMoves.size() << " Castle Moves\n";
     return castleMoves;
 }

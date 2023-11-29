@@ -75,13 +75,15 @@ void ChessTester::parseAndMove(std::string input) {
 void ChessTester::runMovementTestConsole() {
     std::string input;
 
+    std::cout << std::endl;
+
     while(true) {
         // Read user input
         std::cout << "Enter move (or 'quit' to exit): ";
         std::getline(std::cin, input);
 
         // Check if the user wants to quit
-        if (input == "quit") {
+        if(input == "quit") {
             std::cout << "Exiting continuous test." << std::endl;
             break;
         }

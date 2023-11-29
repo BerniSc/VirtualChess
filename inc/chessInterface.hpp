@@ -80,11 +80,13 @@ namespace engine {
 
                     engine::ChessTile lastCheckedTile;
                     std::vector<engine::ChessTile> lastPossibleMoves;
+                    std::vector<engine::ChessTile> possibleCastleMoves;
 
                     char checkCheck(char figure, char const board[8][8]) const;
                     char checkCheckMate() const;
 
-                    std::vector<std::pair<engine::ChessTile, engine::ChessTile>> getCastleMoves(char figure, char const board[8][8]) const;
+                    std::pair<engine::ChessTile, engine::ChessTile> getOpposingCastleMove(const engine::ChessTile& move) const;
+                    std::vector<engine::ChessTile> getCastleMoves(char figure, char const board[8][8]) const;
 
                     // Check a Move by making a Pseudo-Move and check for check ->
                     bool checkPseudoMove(char figure);

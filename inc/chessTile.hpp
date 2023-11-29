@@ -48,7 +48,7 @@ namespace engine {
                 return this->isCaptureMove;
             };
 
-            inline bool getIsCasleMove() const {
+            inline bool getIsCastleMove() const {
                 return this->isCastleMove;
             };
 

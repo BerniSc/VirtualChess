@@ -147,8 +147,15 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
 }
 
 void engine::ChessBoard::loadFEN(std::string fen) {
-    this->currentBoard = fen;
-                
+    // TODO -> Implement full parsing/storing of the FEN, Also in string2Fen and fen2board
+    std::vector<std::string> seperatedFen = split(fen, " ");
+    this->currentBoard = seperatedFen[0];
+    if(fen.size() > 2) {
+        this->castleable = seperatedFen[2];
+    } else {
+        this->castleable = "KQkq";
+    }
+
     char(*newBoard)[8] = string2board(currentBoard);
     this->writeBoardInternaly(newBoard);
 }

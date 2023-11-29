@@ -88,8 +88,8 @@ namespace engine {
                     std::pair<engine::ChessTile, engine::ChessTile> getOpposingCastleMove(const engine::ChessTile& move) const;
                     std::vector<engine::ChessTile> getCastleMoves(char figure, char const board[8][8]) const;
 
-                    // Check a Move by making a Pseudo-Move and check for check ->
-                    bool checkPseudoMove(char figure);
+                    // Check a Move by making a Pseudo-Move and check for check
+                    bool checkPseudoMove(engine::ChessTile source, engine::ChessTile target, const char board[8][8]) const;
 
                     std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8], engine::ChessTile tile);
             };

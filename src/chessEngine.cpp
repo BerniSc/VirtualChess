@@ -35,7 +35,6 @@ engine::ChessEngine::MoveGenerator::~MoveGenerator() {
 
 std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMoves(char const board[8][8], engine::ChessTile tile) {
     std::vector<engine::ChessTile>& allowedMoves = this->lastPossibleMoves;
-    std::vector<engine::ChessTile> allowedSpecialMoves;
 
     this->lastCheckedTile = tile;
 
@@ -90,6 +89,12 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         }
     }
 
+    allowedMoves.erase(std::remove_if(allowedMoves.begin(), allowedMoves.end(), 
+        [&](const engine::ChessTile& obj) {
+            return this->checkPseudoMove(tile, obj, board);
+        }
+    ), allowedMoves.end());
+
     this->lastPossibleMoves = allowedMoves;
 
     return allowedMoves;
@@ -109,7 +114,6 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
 
         if((*iter.base()).getIsCastleMove()) {
             std::pair<engine::ChessTile, engine::ChessTile> correspondingMove = moveGen->getOpposingCastleMove(target);
-            std::cout << "Was here at castleCheck " << correspondingMove.first.getArrayNr().first << "     " << correspondingMove.first.getArrayNr().second << "\n";
             this->move(correspondingMove.first, correspondingMove.second);
         }
 
@@ -124,7 +128,7 @@ void engine::ChessEngine::move(engine::ChessTile source, engine::ChessTile targe
     this->currentBoard.move(source, target);
 }
 
-// TODO Check for King also, maybe not for ChessCheck?, also return the offending Tile?
+// TODO Add Check (Reference) for King also, maybe not for ChessCheck?, also return the offending Tile?
 bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile, char figure, char const board[8][8]) const {
     Knight referenceKnight(tile, (std::isupper(figure) ? 'N' : 'n'));
     Rook referenceRook(tile, (std::isupper(figure) ? 'R' : 'r'));
@@ -139,7 +143,7 @@ bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile,
     std::vector<engine::ChessTile> movesQueen = referenceQueen.getPossibleMoves(board);
     std::vector<engine::ChessTile> movesPawn = referencePawn.getPossibleMoves(board);
 
-    // Check if any of the pieces can capture the king
+    // Check if any of the pieces can capture the tile under attack -> See if it could capture itsself from the Tile 
     for(const auto& move : movesKnight) {
         std::pair<int,int> pos = move.getArrayNr();
         if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('N'))
@@ -187,12 +191,13 @@ char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const boar
         }
     }
 
-    std::cout << "KingPos: " << kingPosX << "   " << kingPosY << std::endl; 
-
     engine::ChessTile kingTile(kingPosX, kingPosY);
 
+    bool check = this->checkUnderSiege(kingTile, figure, board);
 
-    return this->checkUnderSiege(kingTile, figure, board);
+    if(check) std::cout << "SCHACH...\n";
+
+    return check;
 }
 
 // TODO -> Let the GUI allow to distinguish between Rook Move and Rook Castle Move
@@ -279,4 +284,27 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getCastleMove
 
     std::cout << "Added " << castleMoves.size() << " Castle Moves\n";
     return castleMoves;
+}
+
+bool engine::ChessEngine::MoveGenerator::checkPseudoMove(engine::ChessTile source, engine::ChessTile target, const char board[8][8]) const {
+    char tempBoard[8][8];
+
+    // Using nested loops to copy the array
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            tempBoard[i][j] = board[i][j];
+        }
+    }
+
+    std::pair<int,int> sourcePos = source.getArrayNr();
+    std::pair<int,int> targetPos = target.getArrayNr();
+
+    char figureSrc = board[sourcePos.first][sourcePos.second];
+
+    tempBoard[sourcePos.first][sourcePos.second] = 0;
+    tempBoard[targetPos.first][targetPos.second] = figureSrc;
+
+    bool check = checkCheck((isupper(figureSrc) ? 'K' : 'k'), tempBoard);
+    std::cout << "Schachdetektor Pseudo " << (check ? "true" : "false") << "\n";
+    return check;
 }

@@ -68,8 +68,11 @@ namespace engine {
 
             struct MoveGenerator {
                 private:
-                    engine::Figure *referenceMover;
+                    engine::Figure* referenceMover;
                     engine::ChessEngine* super;
+
+                    // Check if a specific Tile is under Siege, tile for Coordinates, figure for Colour and Board for the Check
+                    bool checkUnderSiege(engine::ChessTile tile, char figure, char const board[8][8]) const;
 
                 public:
                     MoveGenerator(ChessEngine* engine);
@@ -81,7 +84,7 @@ namespace engine {
                     char checkCheck(char figure, char const board[8][8]) const;
                     char checkCheckMate() const;
 
-                    std::vector<engine::ChessTile> getCastleMoves(char figure, char const board[8][8]) const;
+                    std::vector<std::pair<engine::ChessTile, engine::ChessTile>> getCastleMoves(char figure, char const board[8][8]) const;
 
                     // Check a Move by making a Pseudo-Move and check for check ->
                     bool checkPseudoMove(char figure);

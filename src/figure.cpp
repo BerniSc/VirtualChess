@@ -6,14 +6,6 @@ engine::Figure::~Figure()
 {
 }
 
-std::vector<engine::ChessTile> King::getPossibleMoves(char const board[8][8])
-{
-    std::vector<engine::ChessTile> moves;
-    std::pair<int, int> curPos = position.getArrayNr();
-
-    return moves;
-}
-
 /**
  * Pawn Section
  */
@@ -65,6 +57,40 @@ std::vector<engine::ChessTile> Pawn::getPossibleMoves(char const board[8][8])
          (islower(board[curPos.first][curPos.second]) && isupper(board[rightCaptureX][curPos.second + direction]))))
     {
         moves.push_back(engine::ChessTile(rightCaptureX, curPos.second + direction, true));
+    }
+
+    return moves;
+}
+
+/**
+ * King Section
+*/
+King::King(engine::ChessTile tile, char figure) {
+    this->position = tile;
+    this->identifier = figure;
+}
+
+std::vector<engine::ChessTile> King::getPossibleMoves(const char board[8][8]) {
+    std::vector<engine::ChessTile> moves;
+    std::pair<int, int> curPos = position.getArrayNr();
+
+    // Check 8 possible moves in the neighborhood
+    for(int x = curPos.first - 1; x <= curPos.first + 1; x++) {
+        for(int y = curPos.second - 1; y <= curPos.second + 1; y++) {
+            // Skip the current position
+            if(x == curPos.first && y == curPos.second) {
+                continue;
+            }
+
+            // Check if the position is within the bounds
+            if(x >= 0 && x < 8 && y >= 0 && y < 8) {
+                // Check if the tile is empty or occupied by an opponent's piece
+                if(board[x][y] == 0 || ((isupper(identifier) && islower(board[x][y])) || 
+                                        (islower(identifier) && isupper(board[x][y])))) {
+                    moves.push_back(engine::ChessTile(x, y, (board[x][y] != 0)));
+                }
+            }
+        }
     }
 
     return moves;
@@ -241,8 +267,7 @@ Rook::Rook(engine::ChessTile tile, char figure) {
     this->identifier = figure;
 }
 
-std::vector<engine::ChessTile> Rook::getPossibleMoves(const char board[8][8])
-{
+std::vector<engine::ChessTile> Rook::getPossibleMoves(const char board[8][8]) {
     std::vector<engine::ChessTile> moves;
     std::pair<int, int> curPos = position.getArrayNr();
 

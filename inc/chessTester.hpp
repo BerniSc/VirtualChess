@@ -29,6 +29,8 @@ struct ChessTester {
         void testQueen();
         void testPawn();
 
+        void testCastling();
+
         void printPos(engine::ChessTile tile);
 };
 

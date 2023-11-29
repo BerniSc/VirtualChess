@@ -14,12 +14,13 @@ namespace engine {
             int x, y;
 
             bool isCaptureMove;
+            bool isCastleMove;
         public:
-            inline ChessTile() : y(-1), x(-1), isCaptureMove(false) {
+            inline ChessTile() : y(-1), x(-1), isCaptureMove(false), isCastleMove(false) {
 
             }
 
-            inline explicit ChessTile(int const x, int const y, bool const isCaptureMove = false) : x(x), y(y), isCaptureMove(isCaptureMove) {
+            inline explicit ChessTile(int x, int y, bool isCaptureMove = false, bool isCastleMove = false) : x(x), y(y), isCaptureMove(isCaptureMove), isCastleMove(isCastleMove) {
                 
             };  
                 
@@ -45,6 +46,10 @@ namespace engine {
 
             inline bool getIsCaptureMove() const {
                 return this->isCaptureMove;
+            };
+
+            inline bool getIsCasleMove() const {
+                return this->isCastleMove;
             };
 
             friend bool operator!=(const ChessTile& lhs, const ChessTile& rhs);   

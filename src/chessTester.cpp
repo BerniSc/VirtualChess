@@ -151,11 +151,34 @@ void ChessTester::testBishop() {
     this->engine.loadFEN(testFENPos1);
     tmp = engine.getPossibleMoves(engine::ChessTile(3, 4));  
     printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
-    if (tmp.size() != 13) throw std::runtime_error("Assertation Bishop pos1-1 failed");
+    if(tmp.size() != 13) throw std::runtime_error("Assertation Bishop pos1-1 failed");
 
     this->engine.loadFEN(testFENPos2);
     tmp = engine.getPossibleMoves(engine::ChessTile(2, 5));
     printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
-    if (tmp.size() != 10) throw std::runtime_error("Assertation Bishop pos2-1 failed");
+    if(tmp.size() != 10) throw std::runtime_error("Assertation Bishop pos2-1 failed");
 }
 
+void ChessTester::testCastling() {
+    std::string testFENPos1 = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1";
+    std::string testFENPos2 = "r3k2r/8/8/4q3/5Q2/8/8/R3K2R w KQkq - 0 1";
+
+    std::vector<engine::ChessTile> tmp;
+    this->engine.loadFEN(testFENPos1);
+    tmp = engine.getPossibleMoves(engine::ChessTile(4, 0));  
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 7) throw std::runtime_error("Assertation Castling pos1-1 failed");
+
+    tmp = engine.getPossibleMoves(engine::ChessTile(4, 7));  
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 7) throw std::runtime_error("Assertation Castling pos1-2 failed");
+
+    this->engine.loadFEN(testFENPos2);
+    tmp = engine.getPossibleMoves(engine::ChessTile(4, 0));  
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 6) throw std::runtime_error("Assertation Castling pos2-1 failed");
+
+    tmp = engine.getPossibleMoves(engine::ChessTile(4, 7));  
+    printBoardWithHighlights(this->engine.getCurrentBoard(), tmp);
+    if(tmp.size() != 5) throw std::runtime_error("Assertation Castling pos2-2 failed");
+}

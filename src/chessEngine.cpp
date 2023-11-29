@@ -55,7 +55,6 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     switch(toupper(figure)) {
         case constants::ROOK :
             referenceMover = new Rook(tile, figure);
-
             break;
         case constants::KNIGHT :
             //throw std::runtime_error("Feature KNIGHT MOVE not supportet");
@@ -66,8 +65,8 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
             referenceMover = new Bishop(tile, figure);
             break;
         case constants::KING :
-            throw std::runtime_error("Feature KING MOVE not supportet");
-            //referenceMover = new King();
+            //throw std::runtime_error("Feature KING MOVE not supportet");
+            referenceMover = new King(tile, figure);
             break;
         case constants::QUEEN :
             //throw std::runtime_error("Feature QUEEN MOVE not supportet");
@@ -82,6 +81,17 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     
     if(referenceMover)
         allowedMoves = this->referenceMover->getPossibleMoves(board);
+
+    // If the Current Board is castleable and the tried Figure is a King or a Rook add the CastleMoves
+    if(super->currentBoard.castleable != "-") {
+        auto castleMoves = this->getCastleMoves(figure, board);
+        if(toupper(figure) == 'K')
+            for(auto move : castleMoves)
+                allowedMoves.push_back(move.first);
+        if(toupper(figure) == 'R')
+            for(auto move : castleMoves)
+                allowedMoves.push_back(move.second);
+    }
 
     this->lastPossibleMoves = allowedMoves;
 
@@ -108,28 +118,13 @@ void engine::ChessEngine::move(engine::ChessTile source, engine::ChessTile targe
     this->currentBoard.move(source, target);
 }
 
-char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const board[8][8]) const {
-    // TODO -> Store KingPos somewhere and catch non-king queries
-    int kingPosX = -1, kingPosY = -1;
-    for(int x = 0; x < 8; x++) {
-        for(int y = 0; y < 8; y++) {
-            if(board[x][y] == figure) {
-                kingPosX = x;
-                kingPosY = y;
-                break;
-            }
-        }
-    }
-
-    std::cout << "KingPos: " << kingPosX << "   " << kingPosY << std::endl; 
-
-    engine::ChessTile kingTile(kingPosX, kingPosY);
-
-    Knight referenceKnight(kingTile, (std::isupper(figure) ? 'N' : 'n'));
-    Rook referenceRook(kingTile, (std::isupper(figure) ? 'R' : 'r'));
-    Bishop referenceBishop(kingTile, (std::isupper(figure) ? 'B' : 'b'));
-    Queen referenceQueen(kingTile, (std::isupper(figure) ? 'Q' : 'q'));
-    Pawn referencePawn(kingTile, (std::isupper(figure) ? 'P' : 'p'));
+// TODO Check for King also, maybe not for ChessCheck?, also return the offending Tile?
+bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile, char figure, char const board[8][8]) const {
+    Knight referenceKnight(tile, (std::isupper(figure) ? 'N' : 'n'));
+    Rook referenceRook(tile, (std::isupper(figure) ? 'R' : 'r'));
+    Bishop referenceBishop(tile, (std::isupper(figure) ? 'B' : 'b'));
+    Queen referenceQueen(tile, (std::isupper(figure) ? 'Q' : 'q'));
+    Pawn referencePawn(tile, (std::isupper(figure) ? 'P' : 'p'));
 
     // Get possible moves for each piece
     std::vector<engine::ChessTile> movesKnight = referenceKnight.getPossibleMoves(board);
@@ -184,17 +179,74 @@ char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const boar
     return false;
 }
 
-std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getCastleMoves(char figure, char const board[8][8]) const {
-    if(isupper(figure)) {
-        // Add the Castling Move
-        // TODO -> Maybe move away from using lastCheckedTiles
-        if(this->lastCheckedTile.getArrayNr().first == 0 && super->currentBoard.getCastleable().find((isupper(figure) ? 'Q' : 'q')) != std::string::npos) {
-            // Check if the squares between the king and the rook are empty
-            if(board[1][0] == 0 && board[2][0] == 0 && board[3][0]) {
-            
+char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const board[8][8]) const {
+    // TODO -> Store KingPos somewhere and catch non-king queries
+    int kingPosX = -1, kingPosY = -1;
+    for(int x = 0; x < 8; x++) {
+        for(int y = 0; y < 8; y++) {
+            if(board[x][y] == figure) {
+                kingPosX = x;
+                kingPosY = y;
+                break;
             }
         }
-    } else {
-
     }
+
+    std::cout << "KingPos: " << kingPosX << "   " << kingPosY << std::endl; 
+
+    engine::ChessTile kingTile(kingPosX, kingPosY);
+
+
+    return this->checkUnderSiege(kingTile, figure, board);
+}
+
+std::vector<std::pair<engine::ChessTile, engine::ChessTile>> engine::ChessEngine::MoveGenerator::getCastleMoves(char figure, char const board[8][8]) const {
+    std::vector<std::pair<engine::ChessTile, engine::ChessTile>> castleMoves;
+    std::pair<engine::ChessTile, engine::ChessTile> castleMove;
+    int yCoordinate = (isupper(figure) ? 7 : 0);
+
+    // Checks wheter the current Move is a possible Queenside Castle (The calling Figure is either at x=0 (Left Rook) or the King
+    bool queensideCastle = (this->lastCheckedTile.getArrayNr().first == 0 | toupper(figure) == 'K');
+    // Checks wheter the current Move is a possible Queenside Castle (The calling Figure is either at x=7 (Right Rook) or the King
+    bool kingsideCastle = (this->lastCheckedTile.getArrayNr().first == 7 | toupper(figure) == 'K');
+
+    // Add the Castling Move -> Queenside first
+    // TODO -> Maybe move away from using lastCheckedTiles
+    if(queensideCastle && super->currentBoard.getCastleable().find((isupper(figure) ? 'Q' : 'q')) != std::string::npos) {
+        // Check if the squares between the king and the rook are empty
+        if(board[1][yCoordinate] == 0 && board[2][yCoordinate] == 0 && board[3][yCoordinate] == 0) {
+            bool movementSpacesClear;
+            movementSpacesClear = !(this->checkUnderSiege(engine::ChessTile(2, yCoordinate), figure, board));
+            movementSpacesClear = movementSpacesClear && !(this->checkUnderSiege(engine::ChessTile(3, yCoordinate), figure, board));
+            movementSpacesClear = movementSpacesClear && !(this->checkUnderSiege(engine::ChessTile(4, yCoordinate), figure, board));
+            // Check if the King is NOT in Check and the Tiles in between are not under Siege
+            if(!(this->checkCheck((isupper(figure) ? 'K' : 'k'), board)) && movementSpacesClear) {
+                // The Move for the King -> No Capture but Castle
+                castleMove.first = engine::ChessTile(2, yCoordinate, false, true);
+                // The Move for the Rook -> No Capture but Castle
+                castleMove.second = engine::ChessTile(3, yCoordinate, false, true);
+                castleMoves.push_back(castleMove);
+            }
+        }
+    }
+
+    // Now add the Kingside Castling Move
+    if(kingsideCastle && super->currentBoard.getCastleable().find((isupper(figure) ? 'K' : 'k')) != std::string::npos) {
+        // Check if the squares between the king and the rook are empty
+        if(board[5][yCoordinate] == 0 && board[6][yCoordinate] == 0) {
+            bool movementSpacesClear;
+            movementSpacesClear = !this->checkUnderSiege(engine::ChessTile(5, yCoordinate), figure, board);
+            movementSpacesClear = movementSpacesClear && !this->checkUnderSiege(engine::ChessTile(6, yCoordinate), figure, board);
+            // Check if the King is NOT in Check and the Tiles in between are not under Siege
+            if(!this->checkCheck((isupper(figure) ? 'K' : 'k'), board) && movementSpacesClear) {
+                // The Move for the King -> No Capture but Castle
+                castleMove.first = engine::ChessTile(6, yCoordinate, false, true);
+                // The Move for the Rook -> No Capture but Castle
+                castleMove.second = engine::ChessTile(5, yCoordinate, false, true);
+                castleMoves.push_back(castleMove);
+            }
+        }
+    }
+
+    return castleMoves;
 }

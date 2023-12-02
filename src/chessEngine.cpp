@@ -89,6 +89,8 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         }
     }
 
+
+    // Now remove all the Moves that would result in the own King checked
     allowedMoves.erase(std::remove_if(allowedMoves.begin(), allowedMoves.end(), 
         [&](const engine::ChessTile& obj) {
             return this->checkPseudoMove(tile, obj, board);

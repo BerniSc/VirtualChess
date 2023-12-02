@@ -47,9 +47,13 @@ char (*engine::ChessBoard::string2board(std::string fen))[8] {
             }
         }
     }
+    
     return arrayBoard;
 }
 
+/**
+ * Converts the given Board to a FEN, Also adds the current "Elements" like turn, castleable flag etc to the FEN
+*/
 std::string engine::ChessBoard::board2string(const char board[8][8]) {
     std::string fen = "";
 

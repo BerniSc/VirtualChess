@@ -1,6 +1,6 @@
 obj/linux64/Release/src/ofApp.o: \
- /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/examples/communication/oscReceiveExample/src/ofApp.cpp \
- /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/examples/communication/oscReceiveExample/src/ofApp.h \
+ /home/jasmina/PycharmProjects/mediapipe/oscReceiveExample/src/ofApp.cpp \
+ /home/jasmina/PycharmProjects/mediapipe/oscReceiveExample/src/ofApp.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/ofMain.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/utils/ofConstants.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/tess2/include/tesselator.h \
@@ -338,7 +338,7 @@ obj/linux64/Release/src/ofApp.o: \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/addons/ofxOsc/libs/oscpack/src/osc/../ip/PacketListener.h
 
-/home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/examples/communication/oscReceiveExample/src/ofApp.h:
+/home/jasmina/PycharmProjects/mediapipe/oscReceiveExample/src/ofApp.h:
 
 /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/ofMain.h:
 

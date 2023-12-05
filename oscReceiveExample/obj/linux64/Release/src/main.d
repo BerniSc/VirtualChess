@@ -1,5 +1,5 @@
 obj/linux64/Release/src/main.o: \
- /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/examples/communication/oscReceiveExample/src/main.cpp \
+ /home/jasmina/PycharmProjects/mediapipe/oscReceiveExample/src/main.cpp \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/ofMain.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/utils/ofConstants.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/tess2/include/tesselator.h \
@@ -320,7 +320,7 @@ obj/linux64/Release/src/main.o: \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/3d/of3dUtils.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/3d/ofCamera.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/3d/ofEasyCam.h \
- /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/examples/communication/oscReceiveExample/src/ofApp.h \
+ /home/jasmina/PycharmProjects/mediapipe/oscReceiveExample/src/ofApp.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/addons/ofxOsc/src/ofxOsc.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/addons/ofxOsc/src/ofxOscArg.h \
  /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/addons/ofxOsc/src/ofxOscMessage.h \
@@ -980,7 +980,7 @@ obj/linux64/Release/src/main.o: \
 
 /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/libs/openFrameworks/3d/ofEasyCam.h:
 
-/home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/examples/communication/oscReceiveExample/src/ofApp.h:
+/home/jasmina/PycharmProjects/mediapipe/oscReceiveExample/src/ofApp.h:
 
 /home/jasmina/Downloads/of_v0.12.0_linux64gcc6_release/addons/ofxOsc/src/ofxOsc.h:
 

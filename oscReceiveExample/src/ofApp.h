@@ -33,7 +33,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		bool checkDistance() const;
+		bool checkDistance();
 
 		ofTrueTypeFont font;
 		ofxOscReceiver receiver;

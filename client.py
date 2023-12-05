@@ -24,12 +24,12 @@ if __name__ == "__main__":
   args = parser.parse_args()
 
   client = udp_client.SimpleUDPClient(args.ip, args.port)
-  clientB = udp_client.SimpleUDPClient("100.83.65.154", args.port)
+  clientB = udp_client.SimpleUDPClient("100.83.140.1", args.port)
 
   #hier war for-Schleife
 
   # For webcam input:
-  cap = cv2.VideoCapture(0)
+  cap = cv2.VideoCapture(2)
   with mp_hands.Hands(
           min_detection_confidence=0.5,
           min_tracking_confidence=0.5) as hands:

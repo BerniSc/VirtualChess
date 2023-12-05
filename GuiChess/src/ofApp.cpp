@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetWindowTitle("VirtualChess");
 	image.load("logo.png");
 	font.load("arial.ttf", 10);
 	// Removed "stream" parameter to ensure compatibility with Linux System
@@ -9,36 +10,61 @@ void ofApp::setup(){
 	//chessWorkout.setVolume(0.6);
 	//chessWorkout.setLoop(true);
 	//chessWorkout.play();
+	receiver.setup(PORT);
+	ofSetFrameRate(60); // run at 60 fps
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	this->windowHeight = ofGetHeight();
-	this->windowWidth = ofGetWidth();
+	
+	// Receiver loop
+	while(receiver.hasWaitingMessages()){
 
-	//std::cout << windowHeight << "		" << windowWidth << std::endl;
+		// get the next message
+		ofxOscMessage m;
+		receiver.getNextMessage(m);
+		//ofLog() << m.getAddress();
 
-	//std::cout << scalingFactorTile << "		" << std::endl;
-	//std::cout << "Chess Square Dimension: " << chessSquareDimension << std::endl;
+		// check for mouse moved message
+		if(m.getAddress() == "/daumen"){
 
-	// Scale acording to the SMAAAALLLLER Side of the Window, as it is more important to get the Image to fit
-	int min = std::min(windowHeight, windowWidth);
+			// both the arguments are floats
+			XfThumb = m.getArgAsFloat(1);
+			YfThumb = m.getArgAsFloat(2);
+			//ofLog() << XfThumb << " " << YfIndex;
+		}
+		if(m.getAddress() == "/zeigefinger"){
 
-	// Calculate the ScalingFactor
-	this->scalingFactorTile = float(min) / float(minimalWindowSize);
+			// both the arguments are floats
+			XfIndex = m.getArgAsFloat(1);
+			YfIndex= m.getArgAsFloat(2);
+			//ofLog() << XfIndex << " " << YfIndex;
+		}
+	}
 
-	// Cap the Value so no State smaller than the Default State is possible
-	this->scalingFactorTile = scalingFactorTile <= 1.0 ? 1.0 : scalingFactorTile;
-
-	this->CHESS_BOARD_PLATE_DIMESION = this->start_CHESS_BOARD_PLATE_DIMESION * this->scalingFactorTile;
-	this->CHESS_BOARD_PLATE_GAP = this->start_CHESS_BOARD_PLATE_GAP * this->scalingFactorTile;
-	this->CHESS_BOARD_FOCUS_POINT_RADIUS = this->start_CHESS_BOARD_FOCUS_POINT_RADIUS * this->scalingFactorTile;
-
-	chessSquareDimension = CHESS_BOARD_PLATE_DIMESION * CHESS_BOARD_LENGTH + CHESS_BOARD_PLATE_GAP * 7;
+	// Camera data process
+	checkDistance();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+
+
+	this->windowHeight = ofGetHeight();
+	this->windowWidth = ofGetWidth();
+	//std::cout << windowHeight << "		" << windowWidth << std::endl;
+	//std::cout << scalingFactorTile << "		" << std::endl;
+	//std::cout << "Chess Square Dimension: " << chessSquareDimension << std::endl;
+	// Scale acording to the SMAAAALLLLER Side of the Window, as it is more important to get the Image to fit
+	int min = std::min(windowHeight, windowWidth);
+	// Calculate the ScalingFactor
+	this->scalingFactorTile = float(min) / float(minimalWindowSize);
+	// Cap the Value so no State smaller than the Default State is possible
+	this->scalingFactorTile = scalingFactorTile <= 1.0 ? 1.0 : scalingFactorTile;
+	this->CHESS_BOARD_PLATE_DIMESION = this->start_CHESS_BOARD_PLATE_DIMESION * this->scalingFactorTile;
+	this->CHESS_BOARD_PLATE_GAP = this->start_CHESS_BOARD_PLATE_GAP * this->scalingFactorTile;
+	this->CHESS_BOARD_FOCUS_POINT_RADIUS = this->start_CHESS_BOARD_FOCUS_POINT_RADIUS * this->scalingFactorTile;
+	chessSquareDimension = CHESS_BOARD_PLATE_DIMESION * CHESS_BOARD_LENGTH + CHESS_BOARD_PLATE_GAP * 7;
 	
 	//Displaying th GUI of the Chess Game
 
@@ -277,8 +303,8 @@ void ofApp::calculateIndicatorFixCoordinates(){
 	//Conversion from Camera to GUI
 	float plateDivision = maxCameraDimension / CHESS_BOARD_LENGTH;
 
-	this->indicatorCoordinaters[0] = floor(xCamera / plateDivision);
-	this->indicatorCoordinaters[1] = floor(yCamera / plateDivision);
+	this->indicatorCoordinaters[0] = floor(xIndicator / plateDivision);
+	this->indicatorCoordinaters[1] = floor(yIndicator / plateDivision);
 
 }
 
@@ -286,8 +312,8 @@ void ofApp::calculateIndicatorFixCoordinates(){
 void ofApp::calculateIndicatorFlexCoordinates() {
 
 	//Conversion from Camera pixels to GUI pixels
-	this->indicatorPixels[0] = ( xCamera * chessSquareDimension) / maxCameraDimension;
-	this->indicatorPixels[1] = ( yCamera * chessSquareDimension) / maxCameraDimension;
+	this->indicatorPixels[0] = ( xIndicator * chessSquareDimension) / maxCameraDimension;
+	this->indicatorPixels[1] = ( yIndicator* chessSquareDimension) / maxCameraDimension;
 
 }
 
@@ -346,4 +372,32 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//--------------------------------------------------------------
+bool ofApp::checkDistance() {
+	float distance = sqrt((XfIndex - XfThumb)*(XfIndex - XfThumb) + (YfIndex - YfThumb)*(YfThumb - YfThumb));
+	//ofLog() << "Distance: " << distance;
+
+	xIndicator = (XfIndex + XfThumb)/2.;
+	yIndicator = (YfIndex + YfThumb)/2.;
+
+	//ofLog() << "xIndicator: " << xIndicator << "  ;  yIndicator: " << yIndicator;
+
+	if (distance <= 30 && distance != 0){
+		indicatorPressed = true;
+		//ofLog() << indicatorPressed;
+		return indicatorPressed;
+	}
+	
+	if (distance >= 40){
+		indicatorPressed = false;
+		//ofLog() << indicatorPressed;
+		return indicatorPressed;
+	}
+
+	else{
+		//ofLog() << indicatorPressed;
+		return indicatorPressed;
+	}
 }

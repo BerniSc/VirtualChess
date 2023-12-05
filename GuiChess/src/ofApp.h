@@ -1,8 +1,14 @@
 #pragma once
 
 #include "ofMain.h"
-
+#include "ofxOsc.h"
 #include <algorithm>
+
+// listening port
+#define PORT 5005
+
+// max number of strings to display
+#define NUM_MSG_STRINGS 20
 
 class ofApp : public ofBaseApp{
 	private:
@@ -33,10 +39,19 @@ class ofApp : public ofBaseApp{
 		float chessSquareDimension = 1.0f;
 
 		// Input from Camara-Detection
-		float maxCameraDimension = 100;
-		float xCamera = 55;
-		float yCamera = 20;
-		bool indicatorPressed = true;
+		float maxCameraDimension = 400;
+		float xIndicator = 55;
+		float yIndicator = 20;
+		bool indicatorPressed = false;
+
+		// Varaibles from Osc
+		int currentMsgString;
+		string msgStrings[NUM_MSG_STRINGS];
+
+		float XfThumb = 0;
+		float YfThumb = 0;
+		float XfIndex = 0;
+		float YfIndex = 0;
 
 		//Test Variables
 		int indicatorCoordinaters[2] = { 0,0 };
@@ -71,6 +86,9 @@ class ofApp : public ofBaseApp{
 		void calculateIndicatorFixCoordinates();
 		void calculateIndicatorFlexCoordinates();
 
+		// Process camera input
+		bool checkDistance();
+
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -83,4 +101,5 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		ofxOscReceiver receiver;
 };

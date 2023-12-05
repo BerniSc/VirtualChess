@@ -14,7 +14,7 @@ import mediapipe as mp
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
-#Bernhard Ip: 100.83.65.154
+#Bernhard Ip: 100.83.140.1
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--ip", default="127.0.0.1",
@@ -30,6 +30,8 @@ if __name__ == "__main__":
 
   # For webcam input:
   cap = cv2.VideoCapture(2)
+  cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1600)
+  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1200)
   with mp_hands.Hands(
           min_detection_confidence=0.5,
           min_tracking_confidence=0.5) as hands:

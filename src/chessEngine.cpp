@@ -81,6 +81,9 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     if(referenceMover)
         allowedMoves = this->referenceMover->getPossibleMoves(board);
 
+    /**
+    *   Consider the weird Special moves, that affect more then the Source and the Target Field
+    */
     // If the Current Board is castleable and the tried Figure is a King or a Rook add the CastleMoves
     if(super->currentBoard.castleable != "-") {
         std::vector<engine::ChessTile> castleMoves = this->getCastleMoves(figure, board);
@@ -89,7 +92,21 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         }
     }
 
+    // If the Last Move was a EnPassantable Move and now an EnPassante is possible then also add the EnPassante Tiles to possible moves
+    if(super->currentBoard.enPassante != "-") {
+        int x = (super->currentBoard.enPassante[0] - 'a');
+        int y = (super->currentBoard.enPassante[1] - '1');
+        // Check if EnPassante is possible
+        if(true) {
+            ChessTile tile(x, y);
+            tile.setIsEnPassante(true);
+            allowedMoves.push_back(tile);
+        }
+    }
 
+    /**
+     *  Finally remove the illegal moves from the List 
+    */
     // Now remove all the Moves that would result in the own King checked
     allowedMoves.erase(std::remove_if(allowedMoves.begin(), allowedMoves.end(), 
         [&](const engine::ChessTile& obj) {
@@ -118,7 +135,6 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
             std::pair<engine::ChessTile, engine::ChessTile> correspondingMove = moveGen->getOpposingCastleMove(target);
             this->move(correspondingMove.first, correspondingMove.second);
         }
-
 
         retVal = true;
     }

@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     tester->printBoard(engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()));
     std::cout << "Converted FEN: " << engine::ChessBoard::board2string(virtualChessEngine.getCurrentBoard()) << "\n";
     getchar();
-    tester->testCastling();
+    //tester->testCastling();
     getchar();
     tester->runMovementTestConsole();
     

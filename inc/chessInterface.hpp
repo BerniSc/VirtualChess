@@ -35,6 +35,9 @@ namespace engine {
             // https://en.wikipedia.org/wiki/Castling
             static std::string castleable;
 
+            // The current EnPassante Status, '-' means not possible, otherwise char/int notation -> got in move from targetFlag
+            static std::string enPassante;
+
             // Move a Piece from A -> B
             void move(engine::ChessTile source, engine::ChessTile target);
 

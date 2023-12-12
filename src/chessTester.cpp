@@ -65,10 +65,19 @@ void ChessTester::parseAndMove(std::string input) {
     // Make a move using the ChessEngine
     engine::ChessTile src(fromCol, fromRow);
     engine::ChessTile trg(toCol, toRow);
-    std::vector<engine::ChessTile> test = engine.getPossibleMoves(src); 
-    this->engine.tryMove(src, trg);    
-
-    this->printBoardWithHighlights(this->engine.getCurrentBoard(), test);
+    try {
+        std::vector<engine::ChessTile> test = engine.getPossibleMoves(src); 
+        //for(auto move : test)
+        //    if(move.getArrayNr() == std::pair<int, int>(toCol, toRow))
+        //        trg = move;
+        //std::cout << "Test ----- " << trg.getIsEnPassanteable() << " | " << trg.getIsEnPassante() << "\n";
+        //if(trg.getArrayNr() == std::pair<int, int>(-1, -1)) return;
+        this->engine.tryMove(src, trg);    
+        this->printBoardWithHighlights(this->engine.getCurrentBoard(), test);
+        std::cout << engine::ChessBoard::board2string(engine.getCurrentBoard()) << "\n";
+    } catch(std::runtime_error& e) {
+        std::cerr << "You picked an empty Piece...";
+    }
 }
 
 

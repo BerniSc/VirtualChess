@@ -38,6 +38,12 @@ namespace engine {
             // The current EnPassante Status, '-' means not possible, otherwise char/int notation -> got in move from targetFlag
             static std::string enPassante;
 
+            // The current number of Halfmoves -> Used for weird fifty-Move rule (from 0 - 50)
+            static int halfmoves;
+
+            // The current Move-Number. Starts at 1 and then gets incremented every time Black Moves;
+            static int moveNumber;
+
             // Move a Piece from A -> B
             void move(engine::ChessTile source, engine::ChessTile target);
 

@@ -7,12 +7,15 @@
 
 char engine::ChessBoard::arrayBoard[8][8];
 std::string engine::ChessBoard::currentBoard;
+
+// Used for piecing together FEN
 char engine::ChessBoard::turn = 'w';
 std::string engine::ChessBoard::castleable = "KQkq";
 std::string engine::ChessBoard::enPassante = "-";
+int engine::ChessBoard::halfmoves = 0;
+int engine::ChessBoard::moveNumber = 1;
 
 engine::ChessBoard::ChessBoard() {
-    turn = 'w';
     reset();
 }
 
@@ -89,11 +92,18 @@ std::string engine::ChessBoard::board2string(const char board[8][8]) {
             fen += '/';
     }
 
+    // Add the Appendage descibing the current Board to the FEN
     fen += " ";
     fen += turn;
     fen += " ";
+    fen += castleable;
+    fen += " ";
+    fen += enPassante;
+    fen += " ";
+    fen += std::to_string(halfmoves);
+    fen += " ";
+    fen += std::to_string(moveNumber);
     
-
     return fen;
 }
 
@@ -131,24 +141,30 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
     char figureSrc = this->arrayBoard[sourcePos.first][sourcePos.second];
 
     // Remove the specific Castleable Flag if a move blocks it 
-    if(this->castleable.size() != 0 && toupper(figureSrc) == 'K') {
-        this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'K' : 'k')), castleable.end());
-        this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'Q' : 'q')), castleable.end());
-    }
+    if(this->castleable.size() != 0) {
 
-    if(this->castleable.size() != 0 && toupper(figureSrc) == 'R') {
-        if(sourcePos.first == 0)
-            this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'Q' : 'q')), castleable.end());
-        if(sourcePos.first == 7)
+        if(toupper(figureSrc) == 'K') {
             this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'K' : 'k')), castleable.end());
+            this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'Q' : 'q')), castleable.end());
+        }
+
+        if(toupper(figureSrc) == 'R') {
+            if(sourcePos.first == 0)
+                this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'Q' : 'q')), castleable.end());
+            if(sourcePos.first == 7)
+                this->castleable.erase(remove(castleable.begin(), castleable.end(), (isupper(figureSrc) ? 'K' : 'k')), castleable.end());
+        }
+    } else {
+        this->castleable = "-";
     }
 
     // Set En-Passante-Flag if Move is EnPassantable
     if(target.getIsEnPassanteable()) {
         std::pair<char, int> pos = target.getFieldNr();
         char x = tolower(pos.first);
-        char y = pos.second;
-        this->enPassante = std::to_string(x) + std::to_string(y);
+        int y = pos.second + (isupper(figureSrc) ? 1 : -1);
+        std::cout << "Added an EnPassante Move on " << x << " | " << y << "\n";
+        this->enPassante = x + std::to_string(y);
     }
 
     this->arrayBoard[sourcePos.first][sourcePos.second] = 0;
@@ -164,8 +180,13 @@ void engine::ChessBoard::loadFEN(std::string fen) {
     // TODO -> Implement full parsing/storing of the FEN, Also in string2Fen and fen2board
     std::vector<std::string> seperatedFen = split(fen, " ");
     this->currentBoard = seperatedFen[0];
+    // TODO CHeck for other Params as well -> For now sufficient, as if one extra is passed then probably the others as well
     if(fen.size() > 2) {
+        this->turn = seperatedFen[1][0];
         this->castleable = seperatedFen[2];
+        this->enPassante = seperatedFen[3];
+        this->halfmoves = stol(seperatedFen[4]);
+        this->moveNumber = stol(seperatedFen[5]);
     } else {
         this->castleable = "KQkq";
     }

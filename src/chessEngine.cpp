@@ -98,6 +98,7 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         int y = (super->currentBoard.enPassante[1] - '1');
         // Check if EnPassante is possible
         if(true) {
+            std::cout << "Added an EnPassante move the the Vector of possible Moves\n";
             ChessTile tile(x, y);
             tile.setIsEnPassante(true);
             allowedMoves.push_back(tile);
@@ -129,7 +130,7 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
     // If TargetTile is contained in possible Moves do the Move
     auto iter = std::find(this->moveGen->lastPossibleMoves.begin(), this->moveGen->lastPossibleMoves.end(), target);
     if(iter != this->moveGen->lastPossibleMoves.end()) {
-        this->move(source, target);
+        this->move(source, *iter.base());
 
         if((*iter.base()).getIsCastleMove()) {
             std::pair<engine::ChessTile, engine::ChessTile> correspondingMove = moveGen->getOpposingCastleMove(target);

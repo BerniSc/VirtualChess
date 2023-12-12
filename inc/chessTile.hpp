@@ -44,8 +44,8 @@ namespace engine {
             // i.e. "A3" or Other Chess Coordinates
             std::pair<char, int> getFieldNr() const {
                 std::pair<char, int> ret;
-                ret.first = x + 1;
-                ret.second = y + 'A';
+                ret.first = x + 'A';
+                ret.second = y + 1;
                 return ret;
             };
 

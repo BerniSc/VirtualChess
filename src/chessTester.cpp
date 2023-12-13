@@ -66,14 +66,9 @@ void ChessTester::parseAndMove(std::string input) {
     engine::ChessTile src(fromCol, fromRow);
     engine::ChessTile trg(toCol, toRow);
     try {
-        std::vector<engine::ChessTile> test = engine.getPossibleMoves(src); 
-        //for(auto move : test)
-        //    if(move.getArrayNr() == std::pair<int, int>(toCol, toRow))
-        //        trg = move;
-        //std::cout << "Test ----- " << trg.getIsEnPassanteable() << " | " << trg.getIsEnPassante() << "\n";
-        //if(trg.getArrayNr() == std::pair<int, int>(-1, -1)) return;
+        std::vector<engine::ChessTile> display = engine.getPossibleMoves(src); 
         this->engine.tryMove(src, trg);    
-        this->printBoardWithHighlights(this->engine.getCurrentBoard(), test);
+        this->printBoardWithHighlights(this->engine.getCurrentBoard(), display);
         std::cout << engine::ChessBoard::board2string(engine.getCurrentBoard()) << "\n";
     } catch(std::runtime_error& e) {
         std::cerr << "You picked an empty Piece...";
@@ -100,7 +95,8 @@ void ChessTester::runMovementTestConsole() {
         // Parse and make the move
         parseAndMove(input);
 
-        std::cout << "Schach: " << (engine.checkCheck() ? "true" : "false") << "\n";
+        std::cout << "Check for White: " << (engine.checkCheck(constants::KING) ? "true" : "false") << "\n";
+        std::cout << "Check for Black: " << (engine.checkCheck(constants::king) ? "true" : "false") << "\n";
     }
 }
 

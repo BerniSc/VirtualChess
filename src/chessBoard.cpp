@@ -165,15 +165,23 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
         int y = pos.second + (isupper(figureSrc) ? 1 : -1);
         std::cout << "Added an EnPassante Move on " << x << " | " << y << "\n";
         this->enPassante = x + std::to_string(y);
+    } else if(this->enPassante != "-") {
+        // Reset it as well if it isnt already reset
+        this->enPassante = "-";
     }
 
     this->arrayBoard[sourcePos.first][sourcePos.second] = 0;
     this->arrayBoard[targetPos.first][targetPos.second] = figureSrc;
 
-    if(target.getIsEnPassante())        // Also remove the passed piece if the Move is an actual En Passante Move TODO -> TEST 
-        this->arrayBoard[targetPos.first][targetPos.second + ((targetPos.second == 2) ? -1 : 1)] = 0;
+    if(target.getIsEnPassante())     {
+        // Also remove the passed piece if the Move is an actual En Passante Move TODO -> TEST 
+        this->arrayBoard[targetPos.first][targetPos.second + ((targetPos.second == 2) ? 1 : -1)] = 0;
+        std::cout << "Removed part " << targetPos.first << " | " << targetPos.second + ((targetPos.second == 2) ? -1 : 1) << "\n";
+    }
 
     this->currentBoard = engine::ChessBoard::board2string(this->arrayBoard);
+
+    this->moveNumber++;
 }
 
 void engine::ChessBoard::loadFEN(std::string fen) {

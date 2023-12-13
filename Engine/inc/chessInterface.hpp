@@ -35,6 +35,15 @@ namespace engine {
             // https://en.wikipedia.org/wiki/Castling
             static std::string castleable;
 
+            // The current EnPassante Status, '-' means not possible, otherwise char/int notation -> got in move from targetFlag
+            static std::string enPassante;
+
+            // The current number of Halfmoves -> Used for weird fifty-Move rule (from 0 - 50)
+            static int halfmoves;
+
+            // The current Move-Number. Starts at 1 and then gets incremented every time Black Moves;
+            static int moveNumber;
+
             // Move a Piece from A -> B
             void move(engine::ChessTile source, engine::ChessTile target);
 
@@ -66,6 +75,7 @@ namespace engine {
         private:
             ChessBoard currentBoard;
 
+            // Nested Class to generate the Valid Moves
             struct MoveGenerator {
                 private:
                     engine::Figure* referenceMover;
@@ -83,7 +93,7 @@ namespace engine {
                     std::vector<engine::ChessTile> possibleCastleMoves;
 
                     char checkCheck(char figure, char const board[8][8]) const;
-                    char checkCheckMate() const;
+                    char checkCheckMate(char figure, char const board[8][8]) const;
 
                     std::pair<engine::ChessTile, engine::ChessTile> getOpposingCastleMove(const engine::ChessTile& move) const;
                     std::vector<engine::ChessTile> getCastleMoves(char figure, char const board[8][8]) const;
@@ -97,7 +107,7 @@ namespace engine {
             MoveGenerator* moveGen;
 
             // Actually do the Move
-            void move(engine::ChessTile source, engine::ChessTile target);
+            void move(const engine::ChessTile& source, const engine::ChessTile& target);
 
         public:
             // Reset the Board and all its Pieces -> Restart for new Game
@@ -118,8 +128,12 @@ namespace engine {
                 this->currentBoard.loadFEN(string);
             }
 
-            inline bool checkCheck() {
-                return this->moveGen->checkCheck('k', this->currentBoard.getBoardArray());
+            inline bool checkCheck(const char& king) {
+                return this->moveGen->checkCheck(king, this->currentBoard.getBoardArray());
+            }
+
+            inline bool checkCheckMate(const char& king) {
+                return this->moveGen->checkCheckMate(king, this->currentBoard.getBoardArray());
             }
 
             ChessEngine();

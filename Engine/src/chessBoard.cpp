@@ -182,6 +182,9 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
     this->currentBoard = engine::ChessBoard::board2string(this->arrayBoard);
 
     this->moveNumber++;
+
+    // Swap the current turn-colour
+    this->turn = (this->turn == 'w' ? 'b' : 'w');
 }
 
 void engine::ChessBoard::loadFEN(std::string fen) {

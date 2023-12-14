@@ -47,6 +47,14 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
 
     char figure = board[pos.first][pos.second];
 
+    // Only a figure of the coulour that is set for the Turn can make a move 
+    if(!constants::debugMovementColourfree) {        
+        if(isupper(figure) && super->currentBoard.turn == 'b' || islower(figure) && super->currentBoard.turn == 'w') {
+            std::cout << "Tried to move " << figure << " when it wasnt your Turn\n";
+            return std::vector<engine::ChessTile>(0);
+        }
+    }
+
     if(this->referenceMover != nullptr)
         delete referenceMover;
 
@@ -150,6 +158,7 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
 
 void engine::ChessEngine::move(const engine::ChessTile& source, const engine::ChessTile& target) {
     this->currentBoard.move(source, target);
+    this->moveGen->lastPossibleMoves.clear();
 }
 
 // TODO Add Check (Reference) for King also, maybe not for ChessCheck?, also return the offending Tile?

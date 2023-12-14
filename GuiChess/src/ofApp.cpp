@@ -4,6 +4,25 @@
 void ofApp::setup(){
 	ofSetWindowTitle("VirtualChess");
 	image.load("logo.png");
+
+	// Load images for chess figures
+
+	// Black pieces
+	rook.load("rook.png");
+	knight.load("knight.png");
+	bishop.load("bishop.png");
+	queen.load("queen.png");
+	king.load("king.png");
+	pawn.load("pawn.png");
+
+	// White pieces
+	ROOK.load("ROOK_W.png");
+	KNIGHT.load("KNIGHT_W.png");
+	BISHOP.load("BISHOP_W.png");
+	QUEEN.load("QUEEN_W.png");
+	KING.load("KING_W.png");
+	PAWN.load("PAWN_W.png");
+
 	font.load("arial.ttf", 10);
 	// Removed "stream" parameter to ensure compatibility with Linux System
 	//chessWorkout.load("chess_workout.mp3");
@@ -73,6 +92,9 @@ void ofApp::draw(){
 
 	//Draw ChessBoard
 	drawChessBoardTiles();
+
+	//Draw chess figures
+	drawChessFigures();
 
 	//Draw overlay for possibilities to move
 	drawHelpfulOverlay();
@@ -167,6 +189,84 @@ void ofApp::drawChessBoardTiles() {
 				CHESS_BOARD_PLATE_DIMESION,
 				CHESS_BOARD_PLATE_DIMESION,
 				CHESS_BOARD_PLATE_RADIUS);
+		};
+	};
+}
+
+//--------------------------------------------------------------
+void ofApp::drawChessFigures() {
+	ofSetColor(240);
+	//Function for drawing the Chess Figures
+	for (int i = 0; i < CHESS_BOARD_LENGTH; i++) {
+		for (int j = 0; j < CHESS_BOARD_LENGTH; j++) {
+
+			// Switching between figures
+			switch (arrayBoard[i][j]) {
+				// black figures
+				case 'r':
+					rook.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+								j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					rook.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'n':
+					knight.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					knight.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'b':
+					bishop.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					bishop.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'q':
+					queen.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					queen.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'k':
+					king.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					king.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'p':
+					pawn.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					pawn.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				
+				// white figures
+				case 'R':
+					ROOK.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					ROOK.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'N':
+					KNIGHT.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					KNIGHT.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'B':
+					BISHOP.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					BISHOP.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'Q':
+					QUEEN.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					QUEEN.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'K':
+					KING.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					KING.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+				case 'P':
+					PAWN.draw(i * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (i + 1),
+						j * CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP * (j + 1));
+					PAWN.resize(CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP, CHESS_BOARD_PLATE_DIMESION - 2 * CHESS_BOARD_PLATE_GAP);
+					break;
+			}
+
 		};
 	};
 }

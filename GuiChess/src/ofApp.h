@@ -31,12 +31,22 @@ class ofApp : public ofBaseApp{
 		int CHESS_BOARD_FOCUS_POINT_RADIUS = 5;
 		const int start_CHESS_BOARD_FOCUS_POINT_RADIUS = this->CHESS_BOARD_FOCUS_POINT_RADIUS;
 
-		//
+		// Scaling
 		int windowHeight, windowWidth;
 
 		float scalingFactorTile = 1.0f;
 
 		float chessSquareDimension = 1.0f;
+
+		// Chess Figures
+		char arrayBoard[8][8] = { {'r', 'p', ' ', ' ', ' ', ' ', 'P', 'R'},
+								  {'n', ' ', ' ', 'p', ' ', ' ', 'P', 'N'},
+								  {'b', 'p', ' ', ' ', ' ', ' ', 'P', 'B'},
+								  {'q', 'p', ' ', ' ', ' ', ' ', 'P', 'Q'},
+								  {'k', 'p', ' ', ' ', ' ', ' ', 'P', 'K'},
+								  {'b', 'p', ' ', ' ', ' ', 'P', ' ', 'B'},
+								  {'n', 'p', ' ', ' ', ' ', ' ', 'P', 'N'},
+								  {'r', 'p', ' ', ' ', ' ', ' ', 'P', 'R'} };
 
 		// Input from Camara-Detection
 		float maxCameraDimension = 400;
@@ -64,6 +74,24 @@ class ofApp : public ofBaseApp{
 
 		// Importing files from bin/data
 		ofImage image;
+		
+		//Images for chess figures
+
+		// black pieces
+		ofImage rook;
+		ofImage knight;
+		ofImage bishop;
+		ofImage queen;
+		ofImage king;
+		ofImage pawn;
+
+		// black pieces
+		ofImage ROOK;
+		ofImage KNIGHT;
+		ofImage BISHOP;
+		ofImage QUEEN;
+		ofImage KING;
+		ofImage PAWN;
 
 		ofTrueTypeFont font;
 
@@ -77,6 +105,7 @@ class ofApp : public ofBaseApp{
 
 		// Drawing parts of the chess board
 		void drawChessBoardTiles();
+		void drawChessFigures();
 		void drawHelpfulOverlay();
 		void drawCoordinatesLabeling();
 		void drawRedDoits();

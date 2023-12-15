@@ -2,6 +2,9 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
+
+#include "chessInterface.hpp"
+
 #include <algorithm>
 
 // listening port
@@ -38,15 +41,22 @@ class ofApp : public ofBaseApp{
 
 		float chessSquareDimension = 1.0f;
 
+		engine::ChessEngine VCEngine;
+		char arrayBoard[8][8];
+
+		bool pickedSuccesfully = false;
+		engine::ChessTile succesfullyPickedTile;
+
 		// Chess Figures
-		char arrayBoard[8][8] = { {'r', 'p', ' ', ' ', ' ', ' ', 'P', 'R'},
+		/* char arrayBoard[8][8] = { {'r', 'p', ' ', ' ', ' ', ' ', 'P', 'R'},
 								  {'n', ' ', ' ', 'p', ' ', ' ', 'P', 'N'},
 								  {'b', 'p', ' ', ' ', ' ', ' ', 'P', 'B'},
 								  {'q', 'p', ' ', ' ', ' ', ' ', 'P', 'Q'},
 								  {'k', 'p', ' ', ' ', ' ', ' ', 'P', 'K'},
 								  {'b', 'p', ' ', ' ', ' ', 'P', ' ', 'B'},
 								  {'n', 'p', ' ', ' ', ' ', ' ', 'P', 'N'},
-								  {'r', 'p', ' ', ' ', ' ', ' ', 'P', 'R'} };
+								  {'r', 'p', ' ', ' ', ' ', ' ', 'P', 'R'} }; */
+
 
 		// Input from Camara-Detection
 		float maxCameraDimension = 400;
@@ -96,6 +106,15 @@ class ofApp : public ofBaseApp{
 		ofTrueTypeFont font;
 
 		ofSoundPlayer chessWorkout;
+
+		// Function needed to convert (*)[8] to [8][8] Array -> TODO - Put into utility or smthg like that
+		void inline writeBoardInternaly(char (* array)[8]) {
+			for(int row = 0; row < 8; row++) {
+				for(int col = 0; col < 8; col++) {
+					this->arrayBoard[col][row] = array[col][row];
+				}
+			}
+		}
 		
 
 	public:
@@ -106,7 +125,7 @@ class ofApp : public ofBaseApp{
 		// Drawing parts of the chess board
 		void drawChessBoardTiles();
 		void drawChessFigures();
-		void drawHelpfulOverlay();
+		void drawHelpfulOverlay(int, int, bool);
 		void drawCoordinatesLabeling();
 		void drawRedDoits();
 		void drawIndicator();

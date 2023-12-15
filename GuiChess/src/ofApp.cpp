@@ -29,6 +29,11 @@ void ofApp::setup(){
 	//chessWorkout.setVolume(0.6);
 	//chessWorkout.setLoop(true);
 	//chessWorkout.play();
+
+	VCEngine.reset();
+	VCEngine.loadFEN("r3k2r/pppppppp/8/8/4q3/8/PPPPPPPP/R3K2R w KQkq - 0 1");
+	writeBoardInternaly(VCEngine.getCurrentBoard());
+
 	receiver.setup(PORT);
 	ofSetFrameRate(60); // run at 60 fps
 }
@@ -97,7 +102,7 @@ void ofApp::draw(){
 	drawChessFigures();
 
 	//Draw overlay for possibilities to move
-	drawHelpfulOverlay();
+	// drawHelpfulOverlay();
 
 	//Draw coordinates labeling
 	drawCoordinatesLabeling();
@@ -272,24 +277,22 @@ void ofApp::drawChessFigures() {
 }
 
 //--------------------------------------------------------------
-void ofApp::drawHelpfulOverlay() {
-
-	//Coordiantes (x,y) (left upper corner => (0,0))
-	int k1[2] = { 0,0 };
-	int k2[2] = { 1,1 };
-	int k3[2] = { 2,4 };
-	//Function for drawing the ChessBoard(-Overlay)
-	
+void ofApp::drawHelpfulOverlay(int posX, int posY, bool isCapture) {
 	//Overlay for possibilities to move
-	ofSetColor(41, 254, 47, 60);
+	if(!isCapture)
+		ofSetColor(41, 254, 47, 60);
+	else
+		ofSetColor(255, 67, 40, 60);
+
 	ofDrawRectRounded(
-		k1[0] * CHESS_BOARD_PLATE_DIMESION + k1[0] * CHESS_BOARD_PLATE_GAP,
-		k1[1] * CHESS_BOARD_PLATE_DIMESION + k1[1] * CHESS_BOARD_PLATE_GAP,
+		posX * CHESS_BOARD_PLATE_DIMESION + posX * CHESS_BOARD_PLATE_GAP,
+		posY * CHESS_BOARD_PLATE_DIMESION + posY * CHESS_BOARD_PLATE_GAP,
 		CHESS_BOARD_PLATE_DIMESION,
 		CHESS_BOARD_PLATE_DIMESION,
 		CHESS_BOARD_PLATE_RADIUS
 	);
 
+	/*
 	//Overlay for moves that are blocked
 	ofSetColor(255, 67, 40, 60);
 	ofDrawRectRounded(
@@ -309,6 +312,7 @@ void ofApp::drawHelpfulOverlay() {
 		CHESS_BOARD_PLATE_DIMESION,
 		CHESS_BOARD_PLATE_RADIUS
 	);
+	*/
 }
 
 //--------------------------------------------------------------
@@ -380,12 +384,35 @@ void ofApp::drawIndicator() {
 
 		calculateIndicatorFixCoordinates();
 
+		try {
+			engine::ChessTile src(indicatorCoordinaters[0], indicatorCoordinaters[1]);
+			std::vector<engine::ChessTile> possibleTiles= VCEngine.getPossibleMoves(src);
+
+			if(possibleTiles.size() != 0) {
+				this->pickedSuccesfully = true;
+				this->succesfullyPickedTile = src;
+				for(auto& tile : possibleTiles) {
+					std::pair<int, int> pos = tile.getArrayNr();
+					drawHelpfulOverlay(pos.first, pos.second, tile.getIsCaptureMove());
+				}
+			}
+		} catch(std::runtime_error& ex) {
+	
+		}
+
 		ofDrawCircle(
 			indicatorCoordinaters[0] * ( CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP ) + CHESS_BOARD_PLATE_DIMESION / 2,
 			indicatorCoordinaters[1] * ( CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP ) + CHESS_BOARD_PLATE_DIMESION / 2,
 			CHESS_BOARD_FOCUS_POINT_RADIUS);
 	}
 	else {
+		
+		if(this->pickedSuccesfully) {
+			VCEngine.tryMove(this->succesfullyPickedTile, engine::ChessTile(indicatorCoordinaters[0], indicatorCoordinaters[1]));
+			this->pickedSuccesfully = false;
+			writeBoardInternaly(VCEngine.getCurrentBoard());
+		}
+
 		ofSetColor(120, 120, 120);
 
 		calculateIndicatorFlexCoordinates();
@@ -477,20 +504,22 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 //--------------------------------------------------------------
 bool ofApp::checkDistance() {
 	float distance = sqrt((XfIndex - XfThumb)*(XfIndex - XfThumb) + (YfIndex - YfThumb)*(YfThumb - YfThumb));
-	//ofLog() << "Distance: " << distance;
+	// ofLog() << "Distance: " << distance;
 
 	xIndicator = (XfIndex + XfThumb)/2.;
 	yIndicator = (YfIndex + YfThumb)/2.;
 
 	//ofLog() << "xIndicator: " << xIndicator << "  ;  yIndicator: " << yIndicator;
 
-	if (distance <= 30 && distance != 0){
+	// 30
+	if (distance <= 5 && distance != 0){
 		indicatorPressed = true;
 		//ofLog() << indicatorPressed;
 		return indicatorPressed;
 	}
 	
-	if (distance >= 40){
+	// 40
+	if (distance >= 10){
 		indicatorPressed = false;
 		//ofLog() << indicatorPressed;
 		return indicatorPressed;

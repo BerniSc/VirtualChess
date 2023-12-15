@@ -24,13 +24,33 @@ void engine::ChessEngine::reset() {
 }
 
 
-engine::ChessEngine::MoveGenerator::MoveGenerator(engine::ChessEngine* engine) : referenceMover(nullptr), super(engine) {
+engine::ChessEngine::MoveGenerator::MoveGenerator(engine::ChessEngine* engine) : super(engine) {
+    engine::ChessTile startTile;
+    // Knight
+    referenceMovers[constants::KNIGHT] = std::unique_ptr<engine::Figure>(new Knight(startTile, constants::KNIGHT));
+    referenceMovers[constants::knight] = std::unique_ptr<engine::Figure>(new Knight(startTile, constants::knight));
+    // Rook
+    referenceMovers[constants::ROOK] = std::unique_ptr<engine::Figure>(new Rook(startTile, constants::ROOK));
+    referenceMovers[constants::rook] = std::unique_ptr<engine::Figure>(new Rook(startTile, constants::rook));
+    // Bishop
+    referenceMovers[constants::BISHOP] = std::unique_ptr<engine::Figure>(new Bishop(startTile, constants::BISHOP));
+    referenceMovers[constants::bishop] = std::unique_ptr<engine::Figure>(new Bishop(startTile, constants::bishop));
+    // Queen
+    referenceMovers[constants::QUEEN] = std::unique_ptr<engine::Figure>(new Queen(startTile, constants::QUEEN));
+    referenceMovers[constants::queen] = std::unique_ptr<engine::Figure>(new Queen(startTile, constants::queen));
+    // Pawn
+    referenceMovers[constants::PAWN] = std::unique_ptr<engine::Figure>(new Pawn(startTile, constants::PAWN));
+    referenceMovers[constants::pawn] = std::unique_ptr<engine::Figure>(new Pawn(startTile, constants::pawn));
+    // King
+    referenceMovers[constants::KING] = std::unique_ptr<engine::Figure>(new King(startTile, constants::KING));
+    referenceMovers[constants::king] = std::unique_ptr<engine::Figure>(new King(startTile, constants::king));
+
+
     std::cout << "Creted MoveGen\n";
 }
 
 engine::ChessEngine::MoveGenerator::~MoveGenerator() {
-    if(this->referenceMover)
-        delete referenceMover;
+
 }
 
 std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMoves(char const board[8][8], engine::ChessTile tile) {
@@ -55,39 +75,39 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         }
     }
 
-    if(this->referenceMover != nullptr)
-        delete referenceMover;
-
     // Parse the current Tile content
     switch(toupper(figure)) {
         case constants::ROOK :
-            referenceMover = new Rook(tile, figure);
+            referenceMover = dereferenceMovers(figure);
             break;
         case constants::KNIGHT :
             //throw std::runtime_error("Feature KNIGHT MOVE not supportet");
-            referenceMover = new Knight(tile, figure);
+            referenceMover = dereferenceMovers(figure);
             break;
         case constants::BISHOP :
             //throw std::runtime_error("Feature BISHOP MOVE not supportet");
-            referenceMover = new Bishop(tile, figure);
+            referenceMover = dereferenceMovers(figure);
             break;
         case constants::KING :
             //throw std::runtime_error("Feature KING MOVE not supportet");
-            referenceMover = new King(tile, figure);
+            referenceMover = dereferenceMovers(figure);
             break;
         case constants::QUEEN :
             //throw std::runtime_error("Feature QUEEN MOVE not supportet");
-            referenceMover = new Queen(tile, figure);
+            referenceMover = dereferenceMovers(figure);
             break;
         case constants::PAWN :
-            referenceMover = new Pawn(tile, figure);
+            referenceMover = dereferenceMovers(figure);
             break;
         default :
+            referenceMover = nullptr;
             throw std::runtime_error("Please try a Tile containing Something");
     }
     
-    if(referenceMover)
+    if(referenceMover != nullptr) {
+        referenceMover->setPosition(tile);
         allowedMoves = this->referenceMover->getPossibleMoves(board);
+    }
 
     /**
     *   Consider the weird Special moves, that affect more then the Source and the Target Field
@@ -130,6 +150,15 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     return allowedMoves;
 }
 
+/***
+ * Helper Function to dereference referenceMover in Question
+*/
+engine::Figure* engine::ChessEngine::MoveGenerator::dereferenceMovers(char const mover) {
+    auto referenceMover = this->referenceMovers.find(mover);
+        
+    return referenceMover->second.get();
+}
+
 bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile target) {
     bool retVal = false;
 
@@ -163,11 +192,13 @@ void engine::ChessEngine::move(const engine::ChessTile& source, const engine::Ch
 
 // TODO Add Check (Reference) for King also, maybe not for ChessCheck?, also return the offending Tile?
 bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile, char figure, char const board[8][8]) const {
-    Knight referenceKnight(tile, (std::isupper(figure) ? 'N' : 'n'));
-    Rook referenceRook(tile, (std::isupper(figure) ? 'R' : 'r'));
-    Bishop referenceBishop(tile, (std::isupper(figure) ? 'B' : 'b'));
-    Queen referenceQueen(tile, (std::isupper(figure) ? 'Q' : 'q'));
-    Pawn referencePawn(tile, (std::isupper(figure) ? 'P' : 'p'));
+    // TODO Implement this version relying on the Map that is already created
+    // std::string referenceString = (std::isupper(figure) ? "KRBQP" : "krbqp");
+    Knight referenceKnight(tile, (std::isupper(figure) ? constants::KNIGHT : constants::knight));
+    Rook referenceRook(tile, (std::isupper(figure) ? constants::ROOK : constants::rook));
+    Bishop referenceBishop(tile, (std::isupper(figure) ? constants::BISHOP : constants::bishop));
+    Queen referenceQueen(tile, (std::isupper(figure) ? constants::QUEEN : constants::queen));
+    Pawn referencePawn(tile, (std::isupper(figure) ? constants::PAWN : constants::pawn));
 
     // Get possible moves for each piece
     std::vector<engine::ChessTile> movesKnight = referenceKnight.getPossibleMoves(board);
@@ -177,6 +208,7 @@ bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile,
     std::vector<engine::ChessTile> movesPawn = referencePawn.getPossibleMoves(board);
 
     // Check if any of the pieces can capture the tile under attack -> See if it could capture itsself from the Tile 
+    // Colour already considered in getPossibleMoves
     for(const auto& move : movesKnight) {
         std::pair<int,int> pos = move.getArrayNr();
         if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('N'))

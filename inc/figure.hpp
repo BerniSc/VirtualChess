@@ -16,6 +16,8 @@ namespace engine {
         public:
             virtual std::vector<engine::ChessTile> getPossibleMoves(char const board[8][8]) = 0;
 
+            void setPosition(engine::ChessTile tile);
+
             virtual ~Figure();
     };
 }

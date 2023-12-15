@@ -5,6 +5,10 @@
 engine::Figure::~Figure() {
 }
 
+void engine::Figure::setPosition(engine::ChessTile tile) {
+    this->position = tile;
+}
+
 /**
  * Pawn Section
  */

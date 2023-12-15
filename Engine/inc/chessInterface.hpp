@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 #include <iostream>
 
@@ -78,12 +79,14 @@ namespace engine {
             // Nested Class to generate the Valid Moves
             struct MoveGenerator {
                 private:
-                    engine::Figure* referenceMover;
+                    Figure* referenceMover;
+                    std::map<char, std::unique_ptr<engine::Figure>> referenceMovers;
                     engine::ChessEngine* super;
 
                     // Check if a specific Tile is under Siege, tile for Coordinates, figure for Colour and Board for the Check
                     bool checkUnderSiege(engine::ChessTile tile, char figure, char const board[8][8]) const;
 
+                    engine::Figure* dereferenceMovers(char const mover);
                 public:
                     MoveGenerator(ChessEngine* engine);
                     ~MoveGenerator();

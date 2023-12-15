@@ -15,13 +15,18 @@ namespace engine {
 
             bool isCaptureMove;
             bool isCastleMove;
+            bool isEnPassanteable;
+            bool isEnPassante = false;
+
         public:
             inline ChessTile() : y(-1), x(-1), isCaptureMove(false), isCastleMove(false) {
 
             }
 
-            inline explicit ChessTile(int x, int y, bool isCaptureMove = false, bool isCastleMove = false) : x(x), y(y), isCaptureMove(isCaptureMove), isCastleMove(isCastleMove) {
-                
+            inline explicit ChessTile(int x, int y, bool isCaptureMove = false, bool isCastleMove = false, bool isEnPassanteable = false) : x(x), y(y) {
+                this->isCaptureMove = isCaptureMove;
+                this->isCastleMove = isCastleMove;
+                this->isEnPassanteable = isEnPassanteable;
             };  
                 
             inline explicit ChessTile(char const x, int const y) : x(toupper(x) - 'A'), y(y) {
@@ -39,8 +44,8 @@ namespace engine {
             // i.e. "A3" or Other Chess Coordinates
             std::pair<char, int> getFieldNr() const {
                 std::pair<char, int> ret;
-                ret.first = x + 1;
-                ret.second = y + 'A';
+                ret.first = x + 'A';
+                ret.second = y + 1;
                 return ret;
             };
 
@@ -51,6 +56,18 @@ namespace engine {
             inline bool getIsCastleMove() const {
                 return this->isCastleMove;
             };
+
+            inline bool getIsEnPassanteable() const {
+                return this->isEnPassanteable;
+            };
+
+            inline bool getIsEnPassante() const {
+                return this->isEnPassante;
+            };
+
+            inline void setIsEnPassante(bool isEnPassante) {
+                this->isEnPassante = isEnPassante;
+            }
 
             friend bool operator!=(const ChessTile& lhs, const ChessTile& rhs);   
             friend bool operator==(const ChessTile& lhs, const ChessTile& rhs);  

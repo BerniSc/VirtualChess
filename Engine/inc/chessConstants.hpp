@@ -24,6 +24,12 @@ namespace constants {
     constexpr inline char turnWhite = 'w';
 
     // TODO consider alternative notation like: 0-6 Type and 8&16 for Colour -> Binary Conversion easy
+
+
+    constexpr inline bool debugMovementColourfree = false; 
+
+    constexpr inline bool debugPseudoChess = false;
+    constexpr inline bool debugCastle = false;
 }
 
 #endif

@@ -29,7 +29,8 @@ std::vector<engine::ChessTile> Pawn::getPossibleMoves(char const board[8][8]) {
     // Add optional double move if the pawn is in its starting position and this Pawn is a true pawn and not an Imposter
     if(((islower(board[curPos.first][curPos.second]) && curPos.second == 1) || (isupper(board[curPos.first][curPos.second]) && curPos.second == 6)) &&
          board[curPos.first][curPos.second + direction] == 0 && !(this->fakePawn)) {
-        moves.push_back(engine::ChessTile(curPos.first, curPos.second + 2 * direction));
+        // Set the En-Passante Flag as special-Move has occured, but NO Castle or Capture Flag can be set during this Move -> NEEDS to be reduced by One -> for Notation
+        moves.push_back(engine::ChessTile(curPos.first, curPos.second + 2 * direction, false, false, true));
     }
 
     // Add possible captures if the destination squares are not empty and have a piece with complementary direction

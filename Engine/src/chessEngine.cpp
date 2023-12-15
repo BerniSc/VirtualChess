@@ -47,6 +47,14 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
 
     char figure = board[pos.first][pos.second];
 
+    // Only a figure of the coulour that is set for the Turn can make a move 
+    if(!constants::debugMovementColourfree) {        
+        if(isupper(figure) && super->currentBoard.turn == 'b' || islower(figure) && super->currentBoard.turn == 'w') {
+            std::cout << "Tried to move " << figure << " when it wasnt your Turn\n";
+            return std::vector<engine::ChessTile>(0);
+        }
+    }
+
     if(this->referenceMover != nullptr)
         delete referenceMover;
 
@@ -81,6 +89,9 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
     if(referenceMover)
         allowedMoves = this->referenceMover->getPossibleMoves(board);
 
+    /**
+    *   Consider the weird Special moves, that affect more then the Source and the Target Field
+    */
     // If the Current Board is castleable and the tried Figure is a King or a Rook add the CastleMoves
     if(super->currentBoard.castleable != "-") {
         std::vector<engine::ChessTile> castleMoves = this->getCastleMoves(figure, board);
@@ -89,7 +100,24 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         }
     }
 
+    // If the Last Move was a EnPassantable Move and now an EnPassante is possible then also add the EnPassante Tiles to possible moves
+    if(super->currentBoard.enPassante != "-") {
+        int x = (super->currentBoard.enPassante[0] - 'a');
+        int y = (super->currentBoard.enPassante[1] - '1');
+        // Check if EnPassante is possible 
+        // For it to Work current Figure must be a Pawn, be of opposing Colour and right next to the enPassantable Pawn in question
+        // Rank for White would be 3 and for Black 4
+        if(toupper(figure) == constants::PAWN && pos.second == (isupper(figure) ? 3 : 4) && (x == pos.first - 1 || x == pos.first + 1)) {
+            std::cout << "Added an EnPassante move the the Vector of possible Moves\n";
+            ChessTile tile(x, y);
+            tile.setIsEnPassante(true);
+            allowedMoves.push_back(tile);
+        }
+    }
 
+    /**
+     *  Finally remove the illegal moves from the List 
+    */
     // Now remove all the Moves that would result in the own King checked
     allowedMoves.erase(std::remove_if(allowedMoves.begin(), allowedMoves.end(), 
         [&](const engine::ChessTile& obj) {
@@ -105,6 +133,9 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
 bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile target) {
     bool retVal = false;
 
+    // TODO Needed?
+    if(source == target) return retVal;
+
     // If the Source is not also the last checked Tile check the Source and safe its Tiles in MoveGev
     if(source != this->moveGen->lastCheckedTile)
         getPossibleMoves(source);
@@ -112,13 +143,12 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
     // If TargetTile is contained in possible Moves do the Move
     auto iter = std::find(this->moveGen->lastPossibleMoves.begin(), this->moveGen->lastPossibleMoves.end(), target);
     if(iter != this->moveGen->lastPossibleMoves.end()) {
-        this->move(source, target);
+        this->move(source, *iter.base());
 
         if((*iter.base()).getIsCastleMove()) {
             std::pair<engine::ChessTile, engine::ChessTile> correspondingMove = moveGen->getOpposingCastleMove(target);
             this->move(correspondingMove.first, correspondingMove.second);
         }
-
 
         retVal = true;
     }
@@ -126,8 +156,9 @@ bool engine::ChessEngine::tryMove(engine::ChessTile source, engine::ChessTile ta
     return retVal;
 }
 
-void engine::ChessEngine::move(engine::ChessTile source, engine::ChessTile target) {
+void engine::ChessEngine::move(const engine::ChessTile& source, const engine::ChessTile& target) {
     this->currentBoard.move(source, target);
+    this->moveGen->lastPossibleMoves.clear();
 }
 
 // TODO Add Check (Reference) for King also, maybe not for ChessCheck?, also return the offending Tile?
@@ -181,6 +212,29 @@ bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile,
 }
 
 char engine::ChessEngine::MoveGenerator::checkCheck(char figure, char const board[8][8]) const {
+    // TODO -> Store KingPos somewhere and catch non-king queries
+    int kingPosX = -1, kingPosY = -1;
+    for(int x = 0; x < 8; x++) {
+        for(int y = 0; y < 8; y++) {
+            if(board[x][y] == figure) {
+                kingPosX = x;
+                kingPosY = y;
+                break;
+            }
+        }
+    }
+
+    engine::ChessTile kingTile(kingPosX, kingPosY);
+
+    bool check = this->checkUnderSiege(kingTile, figure, board);
+
+    if(check) std::cout << "SCHACH...\n";
+
+    return check;
+}
+
+char engine::ChessEngine::MoveGenerator::checkCheckMate(char figure, char const board[8][8]) const {
+    throw(std::runtime_error("Not implemented Yet!"));
     // TODO -> Store KingPos somewhere and catch non-king queries
     int kingPosX = -1, kingPosY = -1;
     for(int x = 0; x < 8; x++) {
@@ -284,7 +338,7 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getCastleMove
         }
     }
 
-    std::cout << "Added " << castleMoves.size() << " Castle Moves\n";
+    if(constants::debugCastle) std::cout << "Added " << castleMoves.size() << " Castle Moves\n";
     return castleMoves;
 }
 
@@ -307,6 +361,6 @@ bool engine::ChessEngine::MoveGenerator::checkPseudoMove(engine::ChessTile sourc
     tempBoard[targetPos.first][targetPos.second] = figureSrc;
 
     bool check = checkCheck((isupper(figureSrc) ? 'K' : 'k'), tempBoard);
-    std::cout << "Schachdetektor Pseudo " << (check ? "true" : "false") << "\n";
+    if(constants::debugPseudoChess) std::cout << "Schachdetektor Pseudo " << (check ? "true" : "false") << "\n";
     return check;
 }

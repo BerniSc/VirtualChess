@@ -29,7 +29,7 @@ namespace engine {
                 this->isEnPassanteable = isEnPassanteable;
             };  
                 
-            inline explicit ChessTile(char const x, int const y) : x(toupper(x) - 'A'), y(y) {
+            inline explicit ChessTile(char const x, int const y) : x(toupper(x) - 'A'), y(y - 1) {
                 
             };
 

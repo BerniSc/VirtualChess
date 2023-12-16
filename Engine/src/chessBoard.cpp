@@ -185,6 +185,14 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
 
     // Swap the current turn-colour
     this->turn = (this->turn == 'w' ? 'b' : 'w');
+    
+    // IF THE AI IS DEFINED LET IT DO THE MOVE FOR THE BLACK FIGURES
+    #ifdef AI_MOVES_BLACK
+        if(this->turn == 'b') {
+            MOVE aiMove = ai.getBestMove(this->currentBoard);
+            move(aiMove.first, aiMove.second);
+        }
+    #endif
 }
 
 void engine::ChessBoard::loadFEN(std::string fen) {

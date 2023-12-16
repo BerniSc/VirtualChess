@@ -45,7 +45,6 @@ engine::ChessEngine::MoveGenerator::MoveGenerator(engine::ChessEngine* engine) :
     referenceMovers[constants::KING] = std::unique_ptr<engine::Figure>(new King(startTile, constants::KING));
     referenceMovers[constants::king] = std::unique_ptr<engine::Figure>(new King(startTile, constants::king));
 
-
     std::cout << "Creted MoveGen\n";
 }
 
@@ -318,6 +317,11 @@ std::pair<engine::ChessTile, engine::ChessTile> engine::ChessEngine::MoveGenerat
 
 std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getCastleMoves(char figure, char const board[8][8]) const {
     std::vector<engine::ChessTile> castleMoves;
+
+    // Catch Bug where moving pawn at x0 or x7 gives him castling ability.... Thats not really intended, but kinda cool ^^
+    if(toupper(figure) != 'K' || toupper(figure) != 'R')
+        return castleMoves;
+
     engine::ChessTile castleMove;
     int yCoordinate = (isupper(figure) ? 7 : 0);
 

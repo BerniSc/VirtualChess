@@ -13,6 +13,7 @@
 #include "chessConstants.hpp"
 #include "chessTile.hpp"
 #include "figure.hpp"
+#include "uciMoves.hpp"
 
 namespace engine {
     // Need ad Least Engine for Friend declaration and Figure
@@ -30,6 +31,11 @@ namespace engine {
             static char arrayBoard[8][8];
             static char turn;
             
+            // IF THE AI FLAG IS DEFINED CREATE AI INSTANCE
+            #ifdef AI_MOVES_BLACK
+                engine::UCI_AI ai;
+            #endif
+
             ChessBoard();                                                  // Private constructor -> Only usable in Friend (ChessEngine)
 
             // TODO -> Add var that shows wheter the current Board is castleable and a fuction to perform the Casteling

@@ -1,6 +1,8 @@
 #ifndef CHESS_CONSTANTS_HPP
 #define CHESS_CONSTANTS_HPP
 
+// #define AI_MOVES_BLACK
+
 namespace constants {
     // Black pieces
     constexpr inline char rook = 'r';

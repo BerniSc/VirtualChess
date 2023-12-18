@@ -32,6 +32,7 @@ void ofApp::setup(){
 
 	VCEngine.reset();
 	VCEngine.loadFEN("r3k2r/pppppppp/8/8/4q3/8/PPPPPPPP/R3K2R w KQkq - 0 1");
+	VCEngine.reset();
 	writeBoardInternaly(VCEngine.getCurrentBoard());
 
 	receiver.setup(PORT);
@@ -397,22 +398,21 @@ void ofApp::drawIndicator() {
 				}
 			}
 		} catch(std::runtime_error& ex) {
-	
+			// A tile has been picked, that does not contain a Figure
 		}
 
 		ofDrawCircle(
 			indicatorCoordinaters[0] * ( CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP ) + CHESS_BOARD_PLATE_DIMESION / 2,
 			indicatorCoordinaters[1] * ( CHESS_BOARD_PLATE_DIMESION + CHESS_BOARD_PLATE_GAP ) + CHESS_BOARD_PLATE_DIMESION / 2,
 			CHESS_BOARD_FOCUS_POINT_RADIUS);
-	}
-	else {
-		
+	
+	}else{
 		if(this->pickedSuccesfully) {
 			VCEngine.tryMove(this->succesfullyPickedTile, engine::ChessTile(indicatorCoordinaters[0], indicatorCoordinaters[1]));
 			this->pickedSuccesfully = false;
 			writeBoardInternaly(VCEngine.getCurrentBoard());
 		}
-
+	}
 		ofSetColor(120, 120, 120);
 
 		calculateIndicatorFlexCoordinates();
@@ -421,7 +421,7 @@ void ofApp::drawIndicator() {
 			indicatorPixels[0],
 			indicatorPixels[1],
 			CHESS_BOARD_FOCUS_POINT_RADIUS);
-	}
+	
 }
 
 //--------------------------------------------------------------
@@ -512,20 +512,18 @@ bool ofApp::checkDistance() {
 	//ofLog() << "xIndicator: " << xIndicator << "  ;  yIndicator: " << yIndicator;
 
 	// 30
-	if (distance <= 5 && distance != 0){
+	if(distance <= 15 && distance != 0){
 		indicatorPressed = true;
 		//ofLog() << indicatorPressed;
 		return indicatorPressed;
 	}
 	
 	// 40
-	if (distance >= 10){
+	if(distance >= 30){
 		indicatorPressed = false;
 		//ofLog() << indicatorPressed;
 		return indicatorPressed;
-	}
-
-	else{
+	} else{
 		//ofLog() << indicatorPressed;
 		return indicatorPressed;
 	}

@@ -179,12 +179,12 @@ void engine::ChessBoard::move(engine::ChessTile source, engine::ChessTile target
         std::cout << "Removed part " << targetPos.first << " | " << targetPos.second + ((targetPos.second == 2) ? -1 : 1) << "\n";
     }
 
-    this->currentBoard = engine::ChessBoard::board2string(this->arrayBoard);
-
     this->moveNumber++;
 
     // Swap the current turn-colour
     this->turn = (this->turn == 'w' ? 'b' : 'w');
+
+    this->currentBoard = engine::ChessBoard::board2string(this->arrayBoard);
     
     // IF THE AI IS DEFINED LET IT DO THE MOVE FOR THE BLACK FIGURES
     #ifdef AI_MOVES_BLACK

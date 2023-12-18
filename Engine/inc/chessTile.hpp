@@ -29,7 +29,7 @@ namespace engine {
                 this->isEnPassanteable = isEnPassanteable;
             };  
                 
-            inline explicit ChessTile(char const x, int const y) : x(toupper(x) - 'A'), y(y - 1) {
+            inline explicit ChessTile(char const x, int const y) : x(toupper(x) - 'A'), y(8 - y) {
                 
             };
 
@@ -45,7 +45,7 @@ namespace engine {
             std::pair<char, int> getFieldNr() const {
                 std::pair<char, int> ret;
                 ret.first = x + 'A';
-                ret.second = y + 1;
+                ret.second = 8 - y;
                 return ret;
             };
 

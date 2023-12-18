@@ -59,7 +59,7 @@ class ofApp : public ofBaseApp{
 
 
 		// Input from Camara-Detection
-		float maxCameraDimension = 400;
+		float maxCameraDimension = 616;
 		float xIndicator = 55;
 		float yIndicator = 20;
 		bool indicatorPressed = false;

@@ -74,25 +74,21 @@ std::vector<engine::ChessTile> engine::ChessEngine::MoveGenerator::getPossibleMo
         }
     }
 
-    // Parse the current Tile content
+    // Parse the current Tile content (get referenceMover by Key)
     switch(toupper(figure)) {
         case constants::ROOK :
             referenceMover = dereferenceMovers(figure);
             break;
         case constants::KNIGHT :
-            //throw std::runtime_error("Feature KNIGHT MOVE not supportet");
             referenceMover = dereferenceMovers(figure);
             break;
         case constants::BISHOP :
-            //throw std::runtime_error("Feature BISHOP MOVE not supportet");
             referenceMover = dereferenceMovers(figure);
             break;
         case constants::KING :
-            //throw std::runtime_error("Feature KING MOVE not supportet");
             referenceMover = dereferenceMovers(figure);
             break;
         case constants::QUEEN :
-            //throw std::runtime_error("Feature QUEEN MOVE not supportet");
             referenceMover = dereferenceMovers(figure);
             break;
         case constants::PAWN :
@@ -206,8 +202,8 @@ bool engine::ChessEngine::MoveGenerator::checkUnderSiege(engine::ChessTile tile,
     std::vector<engine::ChessTile> movesQueen = referenceQueen.getPossibleMoves(board);
     std::vector<engine::ChessTile> movesPawn = referencePawn.getPossibleMoves(board);
 
-    // Check if any of the pieces can capture the tile under attack -> See if it could capture itsself from the Tile 
-    // Colour already considered in getPossibleMoves
+    // Check if any of the pieces can capture the tile under attack -> See if it could capture itsself in other Colour from the Tile 
+    // Colour already considered in getPossibleMoves -> Checks only the enemyCoulour
     for(const auto& move : movesKnight) {
         std::pair<int,int> pos = move.getArrayNr();
         if(move.getIsCaptureMove() && toupper(board[pos.first][pos.second]) == toupper('N'))

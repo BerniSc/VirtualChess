@@ -20,7 +20,7 @@ namespace engine {
             bp::ipstream pipe_stream_out;
             bp::opstream pipe_stream_in;
 
-            const char* cmd = "/usr/bin/python3 scripts/uci_ai.py";
+            const char* cmd = "/usr/bin/python3 /home/berni/Uni/Inf2_2/VirtualChess/scripts/uci_ai.py";
 
             bp::child child;
 

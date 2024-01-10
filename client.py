@@ -1,11 +1,4 @@
-"""Small example OSC client
-
-This program sends 10 random values between 0.0 and 1.0 to the /filter address,
-waiting for 1 seconds between each value.
-"""
 import argparse
-import random
-import time
 
 from pythonosc import udp_client
 import cv2
@@ -23,7 +16,6 @@ points = []
 clicked = False
 
 # The Order in which the points have to be clicked is TL TR BR BL
-
 # Callback function for mouse events
 def mouse_callback(event, x, y, flags, param):
     global clicked, points
@@ -33,8 +25,6 @@ def mouse_callback(event, x, y, flags, param):
         clicked = True
         if len(points) == 4:
             clicked = False
-
-
 
 
 if __name__ == "__main__":
@@ -51,7 +41,9 @@ if __name__ == "__main__":
 
   # Kalibrierung
   # Capture video from the default camera
-  cap = cv2.VideoCapture(0)
+  cap = cv2.VideoCapture(2)
+  cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
   
   # Create a window and set the mouse callback function
   cv2.namedWindow("Perspective Transform")
@@ -91,9 +83,6 @@ if __name__ == "__main__":
   # Release the camera and close all windows
   #cap.release()
   cv2.destroyAllWindows()
-
-
-
 
 
 
